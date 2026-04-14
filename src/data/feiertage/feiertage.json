@@ -1,0 +1,34 @@
+{
+  "stand": "2026-01-01",
+  "quelle": "§ 7 ARG (gesetzliche Feiertage), § 903 ABGB (dies non), § 222 ZPO (verhandlungsfreie Zeit)",
+  "feiertage": [
+    { "name": "Neujahr",                "fix": "01-01",              "abgbFeiertag": true  },
+    { "name": "Heilige Drei Könige",    "fix": "01-06",              "abgbFeiertag": true  },
+    { "name": "Karfreitag",             "osterOffset": -2,           "abgbFeiertag": true  },
+    { "name": "Ostermontag",            "osterOffset": 1,            "abgbFeiertag": true  },
+    { "name": "Staatsfeiertag",         "fix": "05-01",              "abgbFeiertag": true  },
+    { "name": "Christi Himmelfahrt",    "osterOffset": 39,           "abgbFeiertag": true  },
+    { "name": "Pfingstmontag",          "osterOffset": 50,           "abgbFeiertag": true  },
+    { "name": "Fronleichnam",           "osterOffset": 60,           "abgbFeiertag": true  },
+    { "name": "Mariä Himmelfahrt",      "fix": "08-15",              "abgbFeiertag": true  },
+    { "name": "Nationalfeiertag",       "fix": "10-26",              "abgbFeiertag": true  },
+    { "name": "Allerheiligen",          "fix": "11-01",              "abgbFeiertag": true  },
+    { "name": "Mariä Empfängnis",       "fix": "12-08",              "abgbFeiertag": true  },
+    { "name": "Christtag",              "fix": "12-25",              "abgbFeiertag": true  },
+    { "name": "Stefanitag",             "fix": "12-26",              "abgbFeiertag": true  }
+  ],
+  "gerichtsferien": [
+    {
+      "name": "Sommerferien (verhandlungsfreie Zeit)",
+      "von": "07-15",
+      "bis": "08-17",
+      "rechtsgrundlage": "§ 222 Abs 1 ZPO"
+    },
+    {
+      "name": "Weihnachtsferien (verhandlungsfreie Zeit)",
+      "von": "12-24",
+      "bis": "01-06",
+      "rechtsgrundlage": "§ 222 Abs 1 ZPO"
+    }
+  ]
+}

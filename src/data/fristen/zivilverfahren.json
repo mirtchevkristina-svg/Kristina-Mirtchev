@@ -1,0 +1,100 @@
+{
+  "stand": "2026-01-01",
+  "quelle": "ZPO (idF BGBl I 2024/xx), §§ 464, 507, 521, 397a, 548 ZPO",
+  "verfahren": [
+    {
+      "id": "zivil.berufung",
+      "rechtsgebiet": "zivil",
+      "bezeichnung": "Berufung gegen Urteil (Zivilverfahren)",
+      "rechtsmittel": "Berufung",
+      "fristWochen": 4,
+      "fristbeginn": "zustellung",
+      "gerichtsferienRelevant": true,
+      "rechtsgrundlage": "§ 464 Abs 1 ZPO",
+      "hinweis": "Einzubringen beim Gericht erster Instanz. Anwaltspflicht ab LG-Verfahren.",
+      "stand": "2026-01-01"
+    },
+    {
+      "id": "zivil.revision",
+      "rechtsgebiet": "zivil",
+      "bezeichnung": "Revision an den OGH",
+      "rechtsmittel": "Revision",
+      "fristWochen": 4,
+      "fristbeginn": "zustellung",
+      "gerichtsferienRelevant": true,
+      "rechtsgrundlage": "§ 507 Abs 1 ZPO",
+      "hinweis": "Einzubringen beim Gericht erster Instanz; absolute Anwaltspflicht.",
+      "stand": "2026-01-01"
+    },
+    {
+      "id": "zivil.rekurs",
+      "rechtsgebiet": "zivil",
+      "bezeichnung": "Rekurs gegen Beschluss",
+      "rechtsmittel": "Rekurs",
+      "fristTage": 14,
+      "fristbeginn": "zustellung",
+      "gerichtsferienRelevant": true,
+      "rechtsgrundlage": "§ 521 Abs 1 ZPO",
+      "stand": "2026-01-01"
+    },
+    {
+      "id": "zivil.einspruch-zb",
+      "rechtsgebiet": "zivil",
+      "bezeichnung": "Einspruch gegen Zahlungsbefehl (MV)",
+      "rechtsmittel": "Einspruch",
+      "fristWochen": 4,
+      "fristbeginn": "zustellung",
+      "gerichtsferienRelevant": true,
+      "rechtsgrundlage": "§ 248 Abs 1 ZPO",
+      "hinweis": "Beim Gericht einzubringen, das den Zahlungsbefehl erlassen hat.",
+      "stand": "2026-01-01"
+    },
+    {
+      "id": "zivil.einspruch-vu",
+      "rechtsgebiet": "zivil",
+      "bezeichnung": "Einspruch gegen Versäumungsurteil",
+      "rechtsmittel": "Einspruch",
+      "fristTage": 14,
+      "fristbeginn": "zustellung",
+      "gerichtsferienRelevant": true,
+      "rechtsgrundlage": "§ 397a ZPO",
+      "stand": "2026-01-01"
+    },
+    {
+      "id": "zivil.klagebeantwortung",
+      "rechtsgebiet": "zivil",
+      "bezeichnung": "Klagebeantwortung (LG-Verfahren)",
+      "rechtsmittel": "Klagebeantwortung",
+      "fristWochen": 4,
+      "fristbeginn": "zustellung",
+      "gerichtsferienRelevant": true,
+      "rechtsgrundlage": "§ 230 Abs 1 ZPO",
+      "hinweis": "Im BG-Verfahren erfolgt i. d. R. mündliche Streitverhandlung.",
+      "stand": "2026-01-01"
+    },
+    {
+      "id": "zivil.wiedereinsetzung",
+      "rechtsgebiet": "zivil",
+      "bezeichnung": "Antrag auf Wiedereinsetzung in den vorigen Stand",
+      "rechtsmittel": "Wiedereinsetzungsantrag",
+      "fristTage": 14,
+      "fristbeginn": "ereignis",
+      "gerichtsferienRelevant": true,
+      "rechtsgrundlage": "§ 148 Abs 2 ZPO",
+      "hinweis": "Frist läuft ab Wegfall des Hindernisses.",
+      "stand": "2026-01-01"
+    },
+    {
+      "id": "zivil.ev-rekurs",
+      "rechtsgebiet": "zivil",
+      "bezeichnung": "Rekurs gegen einstweilige Verfügung",
+      "rechtsmittel": "Rekurs",
+      "fristTage": 14,
+      "fristbeginn": "zustellung",
+      "gerichtsferienRelevant": false,
+      "rechtsgrundlage": "§ 402 Abs 3 EO iVm § 521 ZPO",
+      "hinweis": "EV-Verfahren sind ferienfrei – wichtige Ausnahme zu § 222 ZPO!",
+      "stand": "2026-01-01"
+    }
+  ]
+}
