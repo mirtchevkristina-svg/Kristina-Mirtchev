@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    font-size: 17px;
+  }
+  html, body, #root { height: 100%; }
+  body {
+    @apply bg-justiz-50 text-justiz-900 font-sans antialiased;
+  }
+  h1 { @apply font-serif text-3xl md:text-4xl font-bold text-justiz-800; }
+  h2 { @apply font-serif text-2xl font-semibold text-justiz-800 mt-6 mb-2; }
+  h3 { @apply font-serif text-xl font-semibold text-justiz-700 mt-4 mb-2; }
+  label { @apply block text-sm font-semibold text-justiz-700 mb-1; }
+  input[type="text"], input[type="number"], input[type="date"], select, textarea {
+    @apply w-full rounded-lg border border-justiz-200 bg-white px-3 py-2
+           focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-gold-500;
+  }
+  button {
+    @apply transition-colors;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-justiz-700
+           px-5 py-2.5 font-semibold text-white shadow
+           hover:bg-justiz-800 active:bg-justiz-900 disabled:opacity-50
+           disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-justiz-300
+           px-4 py-2 font-semibold text-justiz-800 bg-white hover:bg-justiz-100;
+  }
+  .btn-gold {
+    @apply inline-flex items-center justify-center rounded-lg bg-gold-500
+           px-4 py-2 font-semibold text-white hover:bg-gold-600;
+  }
+  .card {
+    @apply rounded-2xl bg-white shadow-sm border border-justiz-100 p-5 md:p-6;
+  }
+  .pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+  .field {
+    @apply mb-4;
+  }
+  .hint {
+    @apply text-sm text-justiz-600 mt-1;
+  }
+  .warn {
+    @apply rounded-lg bg-amber-50 border border-amber-300 text-amber-900 p-3 text-sm;
+  }
+  .danger {
+    @apply rounded-lg bg-red-50 border border-red-300 text-red-900 p-3 text-sm;
+  }
+  .info {
+    @apply rounded-lg bg-justiz-100 border border-justiz-200 text-justiz-800 p-3 text-sm;
+  }
+}
