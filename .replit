@@ -1,0 +1,9 @@
+# Replit-Startkonfiguration für Kolibri
+# Startet einen kleinen Webserver und öffnet die App in der Vorschau.
+
+run = "python3 -m http.server 8000"
+entrypoint = "index.html"
+
+[[ports]]
+localPort = 8000
+externalPort = 80

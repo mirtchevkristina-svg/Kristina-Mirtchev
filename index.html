@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐦 Kolibri — ADHS App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Kopfzeile -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🐦</span>
+      <div>
+        <h1>Kolibri</h1>
+        <p class="tagline">Kopf frei. Ein Schritt nach dem anderen.</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="score" title="Deine Punkte & Tages-Streak">
+        <span id="points">0</span> ⭐
+        <span class="streak" id="streak">🔥 0</span>
+      </div>
+      <button id="themeBtn" class="icon-btn" title="Hell / Dunkel umschalten">🌙</button>
+    </div>
+  </header>
+
+  <!-- Immer sichtbarer Brain-Dump-Balken -->
+  <div class="quickbar">
+    <input id="quickInput" type="text" maxlength="200"
+           placeholder="🧠 Schnell reinwerfen … (Enter zum Speichern)" />
+    <button id="quickAdd" class="primary">Rein damit</button>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="tabs">
+    <button class="tab active" data-view="heute">☀️ Heute</button>
+    <button class="tab" data-view="dump">🧠 Brain Dump</button>
+    <button class="tab" data-view="todos">✅ To-Dos</button>
+    <button class="tab" data-view="kalender">📅 Kalender</button>
+    <button class="tab" data-view="fokus">🎯 Fokus</button>
+  </nav>
+
+  <main>
+    <!-- HEUTE / Dashboard -->
+    <section id="view-heute" class="view active">
+      <div class="focus-card" id="focusCard">
+        <p class="focus-label">Deine eine wichtigste Sache jetzt:</p>
+        <h2 id="focusTitle">Noch nichts ausgewählt 🌱</h2>
+        <div class="focus-actions">
+          <button id="focusDone" class="primary">✓ Erledigt</button>
+          <button id="focusSkip" class="ghost">Andere wählen</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3>⚡ Als Nächstes</h3>
+          <ul id="nextList" class="mini-list"></ul>
+        </div>
+        <div class="panel">
+          <h3>📅 Heute anstehend</h3>
+          <ul id="todayEvents" class="mini-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- BRAIN DUMP -->
+    <section id="view-dump" class="view">
+      <p class="hint">Alles was dir durch den Kopf geht — einfach rein. Sortieren geht später.</p>
+      <ul id="dumpList" class="dump-list"></ul>
+      <p id="dumpEmpty" class="empty">Noch nichts hier. Nutz den Balken oben zum Reinwerfen. 🧠</p>
+    </section>
+
+    <!-- TO-DOS -->
+    <section id="view-todos" class="view">
+      <div class="row">
+        <input id="todoInput" type="text" maxlength="200" placeholder="Neue Aufgabe …" />
+        <select id="todoPrio">
+          <option value="jetzt">⚡ Jetzt</option>
+          <option value="später" selected>🌱 Später</option>
+        </select>
+        <button id="todoAdd" class="primary">+ Hinzufügen</button>
+      </div>
+      <div class="filters">
+        <button class="chip active" data-filter="offen">Offen</button>
+        <button class="chip" data-filter="alle">Alle</button>
+        <button class="chip" data-filter="erledigt">Erledigt</button>
+      </div>
+      <ul id="todoList" class="todo-list"></ul>
+      <p id="todoEmpty" class="empty">Keine Aufgaben hier. Alles im Griff! 🎉</p>
+    </section>
+
+    <!-- KALENDER -->
+    <section id="view-kalender" class="view">
+      <div class="row">
+        <input id="evtTitle" type="text" maxlength="120" placeholder="Termin / Ereignis …" />
+        <input id="evtDate" type="date" />
+        <input id="evtTime" type="time" />
+        <button id="evtAdd" class="primary">+ Eintragen</button>
+      </div>
+      <div id="calList"></div>
+      <p id="calEmpty" class="empty">Noch keine Termine. 📅</p>
+    </section>
+
+    <!-- FOKUS TIMER -->
+    <section id="view-fokus" class="view">
+      <div class="timer-card">
+        <p class="timer-task" id="timerTask">Wähle eine Aufgabe zum Fokussieren</p>
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-controls">
+          <button id="timerStart" class="primary">▶ Start</button>
+          <button id="timerPause" class="ghost">⏸ Pause</button>
+          <button id="timerReset" class="ghost">↺ Reset</button>
+        </div>
+        <div class="timer-presets">
+          <button class="chip" data-min="25">25 Min Fokus</button>
+          <button class="chip" data-min="5">5 Min Pause</button>
+          <button class="chip" data-min="15">15 Min</button>
+          <button class="chip" data-min="45">45 Min</button>
+        </div>
+        <p class="hint" id="timerHint">Tipp: 25 Min konzentriert, dann 5 Min Pause. 🍅</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Konfetti-Overlay -->
+  <div id="confetti" class="confetti-layer" aria-hidden="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
