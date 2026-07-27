@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EINS — eine Sache</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Karla:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Kopf -->
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <div class="mark"><b>EINS</b><span>eine Sache</span></div>
+      <nav class="nav" id="nav">
+        <button class="nav-btn active" data-view="eins">Eins</button>
+        <button class="nav-btn" data-view="ordnen">Ordnen<i class="badge" id="inboxBadge"></i></button>
+        <button class="nav-btn" data-view="woche">Woche</button>
+        <button class="nav-btn" data-view="suche">Suche</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Leeren: immer sichtbares Erfassungsfeld -->
+  <div class="capture">
+    <div class="wrap capture-inner">
+      <input id="capture" type="text" maxlength="240"
+             placeholder="Gedanke rein — Enter genügt" autocomplete="off" />
+      <button id="micBtn" class="mic" title="Diktieren" hidden>🎙</button>
+    </div>
+  </div>
+
+  <main class="wrap">
+
+    <!-- ============ EINS ============ -->
+    <section id="view-eins" class="view active">
+      <div id="oneWrap"><!-- gefüllt per JS --></div>
+    </section>
+
+    <!-- ============ ORDNEN ============ -->
+    <section id="view-ordnen" class="view">
+      <p class="eyebrow">Ordnen</p>
+      <div id="ordnenWrap"></div>
+    </section>
+
+    <!-- ============ WOCHE ============ -->
+    <section id="view-woche" class="view">
+      <p class="eyebrow">Woche · sieben Tage</p>
+      <div id="trayWrap"></div>
+      <div id="weekWrap" class="week"></div>
+    </section>
+
+    <!-- ============ SUCHE ============ -->
+    <section id="view-suche" class="view">
+      <p class="eyebrow">Suche</p>
+      <input id="searchInput" type="text" class="search-field" placeholder="In allem suchen …" autocomplete="off" />
+      <div id="searchWrap"></div>
+    </section>
+
+  </main>
+
+  <!-- ============ LOS · Timer-Overlay ============ -->
+  <div id="timerOverlay" class="overlay" hidden>
+    <div class="overlay-inner">
+      <p class="timer-task" id="timerTask"></p>
+      <div class="ring-holder">
+        <svg class="ring" viewBox="0 0 300 300" aria-hidden="true">
+          <circle class="ring-track" cx="150" cy="150" r="130" />
+          <circle class="ring-fill" id="ringFill" cx="150" cy="150" r="130" />
+        </svg>
+        <div class="ring-center"><span id="timerRemain">15:00</span></div>
+      </div>
+      <div class="timer-actions">
+        <button id="timerToggle" class="btn">Pause</button>
+        <button id="timerDone" class="link">Erledigt</button>
+        <button id="timerClose" class="link">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap">
+      EINS · v1 — eine Sache, nicht siebzehn. &nbsp;·&nbsp;
+      <a href="../index.html">→ zur anderen App (Kolibri)</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
