@@ -1,0 +1,19 @@
+{
+  "name": "westtor-lex-dashboard",
+  "version": "1.0.0",
+  "description": "Internes Kommunikations-Dashboard für die Kanzlei WESTTOR LEX – Videochat, Team-Chat, Projekte, Terminkalender und Pinnwand.",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.7.5"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+npm-debug.log*
+
+# Laufzeitdaten (nicht versionieren)
+data/db.json
+data/*.tmp
+uploads/*
+!uploads/.gitkeep
+
+.env
+.DS_Store
+.replit_history
