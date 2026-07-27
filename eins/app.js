@@ -14,6 +14,8 @@ let state = loadState();
 let seq = state._seq || 0;
 let oneOffset = 0;                 // "Andere": rotiert durch die Kandidaten (nur Session)
 let defaultMin = state._defaultMin || 15;
+let zerlegeBusy = false;           // "Zerleg das" läuft gerade
+let zerlegeErr = "";               // letzte Fehlermeldung von "Zerleg das"
 
 function loadState() {
   try {
@@ -143,10 +145,24 @@ function renderOne() {
   if (oneOffset >= c.length) oneOffset = 0;
   const it = c[oneOffset];
   const bucketLabel = it.bucket === "jetzt" ? "Jetzt" : "Diese Woche";
+  const steps = Array.isArray(it.steps) ? it.steps : [];
   wrap.innerHTML = `
     <div class="onecard">
       <span class="eyebrow">${bucketLabel} · <span id="oneDur">${defaultMin} Min</span></span>
       <h2>${esc(it.text)}</h2>
+
+      ${steps.length ? `
+      <ol class="steps">
+        ${steps.map((s, i) => `
+          <li class="step ${s.done ? "done" : ""} ${i === 0 && !s.done ? "first" : ""}" data-i="${i}">
+            <button class="check step-check ${s.done ? "on" : ""}">${s.done ? "✓" : ""}</button>
+            <span class="step-text">${esc(s.text)}</span>
+            ${s.min ? `<span class="step-min">${s.min} Min</span>` : ""}
+          </li>`).join("")}
+      </ol>` : ""}
+
+      ${zerlegeErr ? `<p class="zerr">${esc(zerlegeErr)}</p>` : ""}
+
       <div class="dur" id="durPick">
         ${[15, 25, 45].map((m) =>
           `<button data-min="${m}" class="${m === defaultMin ? "on" : ""}">${m} Min</button>`).join("")}
@@ -156,6 +172,8 @@ function renderOne() {
         <button class="check" id="oneDone" title="ohne Timer erledigt"></button>
         <button class="link" id="oneNot">Nicht heute</button>
         ${c.length > 1 ? '<button class="link" id="oneOther">Andere</button>' : ""}
+        ${steps.length ? "" :
+          `<button class="link zerlege" id="oneZerlege" ${zerlegeBusy ? "disabled" : ""}>${zerlegeBusy ? "… zerlege" : "✨ Zerleg das"}</button>`}
       </div>
     </div>`;
 
@@ -177,6 +195,35 @@ function renderOne() {
   });
   const other = $("#oneOther");
   if (other) other.addEventListener("click", () => { oneOffset += 1; renderOne(); });
+
+  // Schritte abhaken; alle erledigt → Aufgabe erledigt
+  wrap.querySelectorAll(".step").forEach((li) => {
+    li.querySelector(".step-check").addEventListener("click", () => {
+      const s = it.steps[parseInt(li.dataset.i, 10)];
+      if (!s) return;
+      s.done = !s.done;
+      persist();
+      if (it.steps.every((x) => x.done)) complete(it.id);
+      else renderOne();
+    });
+  });
+
+  // "Zerleg das" — ein Sprachmodell macht aus Nebel einen ersten Schritt
+  const zb = $("#oneZerlege");
+  if (zb) zb.addEventListener("click", async () => {
+    zerlegeErr = "";
+    if (!getApiKey()) { showKeyForm(it.id); return; }
+    zerlegeBusy = true; renderOne();
+    try {
+      it.steps = await zerlege(it.text);
+      persist();
+    } catch (e) {
+      zerlegeErr = friendlyError(e);
+    } finally {
+      zerlegeBusy = false;
+      renderOne();
+    }
+  });
 }
 
 function complete(id) {
@@ -387,6 +434,118 @@ $("#timerClose").addEventListener("click", () => {
   closeTimer(); renderOne();
 });
 function closeTimer() { $("#timerOverlay").hidden = true; }
+
+/* ============================================================
+   ZERLEG DAS (v2) — ein Sprachmodell (Claude API) macht aus einer
+   vagen Aufgabe einen lächerlich kleinen ersten Schritt.
+   Läuft direkt im Browser mit deinem eigenen Anthropic-Key
+   (lokal gespeichert, nur für den Eigengebrauch gedacht).
+============================================================ */
+const API_KEY_STORE = "eins_anthropic_key";
+// Standardmodell. Schneller & günstiger: "claude-haiku-4-5".
+const MODEL = "claude-opus-5";
+
+const getApiKey = () => localStorage.getItem(API_KEY_STORE) || "";
+const setApiKey = (k) => localStorage.setItem(API_KEY_STORE, k.trim());
+const clearApiKey = () => localStorage.removeItem(API_KEY_STORE);
+
+async function zerlege(text) {
+  const key = getApiKey();
+  if (!key) throw new Error("no-key");
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: 1024,
+      thinking: { type: "disabled" },
+      system:
+        "Du zerlegst eine Aufgabe in 3 bis 5 winzige, konkrete Schritte für ein ADHS-Gehirn. " +
+        "Der ERSTE Schritt ist absichtlich lächerlich klein und sofort machbar (z. B. 'Ordner öffnen'). " +
+        "Antworte AUSSCHLIESSLICH mit einem JSON-Array. Jedes Element: " +
+        '{"text": "der Schritt", "min": Zahl}  (min = grobe Minutenschätzung). ' +
+        "Kein Fließtext, keine Erklärung, kein Markdown — nur das JSON-Array.",
+      messages: [{ role: "user", content: "Aufgabe: " + text }],
+    }),
+  });
+  if (!res.ok) {
+    let detail = "";
+    try { detail = JSON.stringify((await res.json()).error || {}); } catch (e) {}
+    throw new Error("http-" + res.status + (detail ? " " + detail : ""));
+  }
+  const data = await res.json();
+  const out = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+  return parseSteps(out);
+}
+
+function parseSteps(s) {
+  const m = s.match(/\[[\s\S]*\]/); // JSON-Array aus dem Text schneiden
+  const arr = JSON.parse(m ? m[0] : s);
+  if (!Array.isArray(arr) || !arr.length) throw new Error("empty");
+  return arr.slice(0, 6).map((x) => ({
+    text: String(typeof x === "string" ? x : x.text || "").trim(),
+    min: Number(x && x.min) || null,
+    done: false,
+  })).filter((x) => x.text);
+}
+
+function friendlyError(e) {
+  const msg = String(e && e.message || e);
+  if (msg === "no-key") return "Kein API-Key hinterlegt.";
+  if (msg === "empty") return "Konnte die Aufgabe nicht zerlegen — versuch es nochmal.";
+  if (msg.startsWith("http-401")) return "API-Key ungültig — unten über den Key-Link neu eintragen.";
+  if (msg.startsWith("http-429")) return "Zu viele Anfragen — kurz warten und nochmal.";
+  if (msg.startsWith("http-")) return "Fehler von der API (" + msg.slice(5, 8) + "). Nochmal versuchen.";
+  if (/Failed to fetch|NetworkError/i.test(msg)) return "Keine Verbindung zur API (Netz/CORS). Später nochmal.";
+  return "Etwas ist schiefgelaufen. Nochmal versuchen.";
+}
+
+// Kleines Formular zum Eintragen/Ändern des API-Keys
+function showKeyForm(retryId) {
+  const wrap = document.createElement("div");
+  wrap.className = "overlay keyform";
+  const have = getApiKey();
+  wrap.innerHTML = `
+    <div class="keycard">
+      <span class="eyebrow">Anthropic API-Key</span>
+      <h3>„Zerleg das" braucht deinen Key</h3>
+      <p>Wird <b>nur lokal in diesem Browser</b> gespeichert und direkt an Anthropic
+      geschickt — nur für den Eigengebrauch. Key holen:
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a></p>
+      <input id="keyInput" type="password" placeholder="sk-ant-…" value="${have ? "" : ""}" />
+      <div class="keyactions">
+        <button class="btn" id="keySave">Speichern</button>
+        ${have ? '<button class="link" id="keyClear">Key löschen</button>' : ""}
+        <button class="link" id="keyCancel">Abbrechen</button>
+      </div>
+    </div>`;
+  document.body.append(wrap);
+  const input = wrap.querySelector("#keyInput");
+  input.focus();
+  const close = () => wrap.remove();
+  wrap.querySelector("#keyCancel").addEventListener("click", close);
+  const clear = wrap.querySelector("#keyClear");
+  if (clear) clear.addEventListener("click", () => { clearApiKey(); close(); });
+  wrap.querySelector("#keySave").addEventListener("click", () => {
+    const v = input.value.trim();
+    if (!v) { input.focus(); return; }
+    setApiKey(v);
+    close();
+    // direkt weitermachen, falls aus "Zerleg das" heraus geöffnet
+    const it = retryId && items().find((x) => x.id === retryId);
+    if (it) { const zb = $("#oneZerlege"); if (zb) zb.click(); }
+  });
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") wrap.querySelector("#keySave").click(); });
+}
+
+// Fußzeilen-Link zum Verwalten des Keys
+const keyLink = document.getElementById("keyManage");
+if (keyLink) keyLink.addEventListener("click", (e) => { e.preventDefault(); showKeyForm(null); });
 
 /* ---------- Start ---------- */
 refreshBadges();

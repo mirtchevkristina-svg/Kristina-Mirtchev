@@ -114,10 +114,15 @@ Verpasstes wird **leiser**, nicht lauter.
   Läuft im Browser, Daten lokal (`localStorage`).
 - **PWA (fertig):** installierbar aufs Homescreen, offline nutzbar (Service Worker,
   App-Icon, Manifest). Auf dem Handy im Browser öffnen → „Zum Startbildschirm hinzufügen".
-- **v2 (geplant):** **„Zerleg das"** — ein Sprachmodell (Claude API) macht aus einer
-  vagen Aufgabe einen lächerlich kleinen ersten Schritt. Plus: Eichung geschätzte vs.
-  tatsächliche Zeit.
-- **Später:** Kalender-Import, echte DB mit Sync.
+- **v2 „Zerleg das" (fertig):** Auf der Eins-Karte macht ein Sprachmodell (Claude API,
+  Modell `claude-opus-5`) aus einer vagen Aufgabe 3–5 winzige, konkrete Schritte —
+  der erste absichtlich lächerlich klein. Läuft **direkt im Browser mit deinem eigenen
+  Anthropic-Key** (lokal gespeichert, nur für den Eigengebrauch; Key holen auf
+  [console.anthropic.com](https://console.anthropic.com/settings/keys), verwalten über
+  den „API-Key"-Link in der Fußzeile). Kein Server nötig, EINS bleibt rein statisch.
+- **v2 (noch offen):** Eichung geschätzte vs. tatsächlich gebrauchte Zeit.
+- **Später:** Kalender-Import, echte DB mit Sync. Wenn EINS mal öffentlich würde,
+  wandert der „Zerleg das"-Aufruf in ein kleines Backend, damit kein Key im Browser liegt.
 
 ## Dateien
 

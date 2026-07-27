@@ -114,6 +114,35 @@ main{flex:1;padding:clamp(34px,7vw,68px) 0 70px;position:relative}
 .dur button:hover{border-color:var(--signal);color:var(--signal)}
 .dur button.on{border-color:var(--signal);color:#fff;background:var(--signal)}
 
+/* Zerleg das — Schritte */
+.steps{list-style:none;margin:20px 0 4px;padding:0}
+.step{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-top:var(--hair)}
+.step:first-child{border-top:none}
+.step-check{margin-top:1px}
+.step-text{flex:1;font-size:16px;line-height:1.4}
+.step.done .step-text{text-decoration:line-through;color:var(--mauve)}
+.step.first .step-text{font-weight:600}
+.step.first::before{content:"erster Schritt";position:absolute;margin-top:-16px;
+  font-family:var(--data);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--signal)}
+.step.first{position:relative;padding-top:20px}
+.step-min{font-family:var(--data);font-size:11px;color:var(--mauve);white-space:nowrap;margin-top:3px}
+.link.zerlege{color:var(--signal)}
+.link.zerlege[disabled]{opacity:.5;cursor:default}
+.zerr{color:var(--signal);font-size:14px;margin:6px 0 0;line-height:1.4}
+
+/* API-Key-Formular */
+.keyform{background:rgba(46,31,38,.28);backdrop-filter:blur(3px)}
+.keycard{background:var(--blanc);border-radius:22px;padding:clamp(26px,5vw,40px);
+  max-width:440px;width:calc(100% - 48px);box-shadow:var(--shadow-lift)}
+.keycard .eyebrow{color:var(--signal)}
+.keycard h3{font-family:var(--display);font-weight:400;font-size:26px;line-height:1.15;margin:12px 0 10px}
+.keycard p{font-size:15px;color:var(--mauve);line-height:1.5;margin-bottom:18px}
+.keycard a{color:var(--signal)}
+#keyInput{width:100%;border:var(--hair);border-radius:12px;padding:13px 15px;
+  font-family:var(--data);font-size:15px;color:var(--plum);outline:none;background:var(--porcelain)}
+#keyInput:focus{border-color:var(--signal)}
+.keyactions{display:flex;align-items:center;gap:10px;margin-top:18px;flex-wrap:wrap}
+
 /* leerer / ruhiger Zustand */
 .calm{text-align:center;padding:clamp(50px,12vw,110px) 10px;color:var(--mauve);
   position:relative;z-index:1}
