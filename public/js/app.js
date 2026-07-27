@@ -130,7 +130,10 @@ function Layout({ user, view, setView, onLogout }) {
       <main class="main">
         <div class="topbar">
           <h1>${TITLES[view]}</h1>
-          <div class="topbar__meta">${new Date().toLocaleDateString('de-AT', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}</div>
+          <div class="topbar__right">
+            <span class="topbar__meta">${new Date().toLocaleDateString('de-AT', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}</span>
+            <img class="topbar__logo" src="/assets/logo.png" alt="WESTTOR LEX" />
+          </div>
         </div>
         <div class=${'content' + (flush ? ' content--flush' : '')}>
           <${View} user=${user} setView=${setView} />
