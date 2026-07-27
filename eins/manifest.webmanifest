@@ -1,0 +1,16 @@
+{
+  "name": "EINS — eine Sache",
+  "short_name": "EINS",
+  "description": "Keine Produktivitäts-App. Eine Entscheidungs-App: zeigt dir eine Sache.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FBF5F4",
+  "theme_color": "#E11D62",
+  "lang": "de",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

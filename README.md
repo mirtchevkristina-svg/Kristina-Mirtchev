@@ -112,10 +112,12 @@ Verpasstes wird **leiser**, nicht lauter.
 
 - **v1 (fertig, dieser Stand):** Leeren · Ordnen · Eins · Los (Timer) · Woche · Suche.
   Läuft im Browser, Daten lokal (`localStorage`).
+- **PWA (fertig):** installierbar aufs Homescreen, offline nutzbar (Service Worker,
+  App-Icon, Manifest). Auf dem Handy im Browser öffnen → „Zum Startbildschirm hinzufügen".
 - **v2 (geplant):** **„Zerleg das"** — ein Sprachmodell (Claude API) macht aus einer
   vagen Aufgabe einen lächerlich kleinen ersten Schritt. Plus: Eichung geschätzte vs.
   tatsächliche Zeit.
-- **Später:** Kalender-Import, PWA fürs Homescreen-Icon, echte DB mit Sync.
+- **Später:** Kalender-Import, echte DB mit Sync.
 
 ## Dateien
 
