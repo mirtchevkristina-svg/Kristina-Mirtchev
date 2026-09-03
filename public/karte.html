@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1115">
+<title>StEOP-Diagnostic - Ergebnis</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header><span class="marke">SUBSUMO</span></header>
+<main id="app"><div class="lade">Lade&hellip;</div></main>
+<script>
+/* Geteilte Ergebniskarte. Zeigt ausschließlich aggregierte Werte -
+   keine Einzelantworten, keinen Namen, keine E-Mail. */
+(async () => {
+  const token = location.pathname.split('/').pop();
+  const app = document.getElementById('app');
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  try {
+    const r = await (await fetch('/api/diagnostic/result/' + encodeURIComponent(token))).json();
+    if (r.error) throw new Error(r.error);
+    app.innerHTML = `
+      <h1>${r.gesamt}% im StEOP-Diagnostic</h1>
+      <p>Ergebnis über ${r.beantwortet} Fragen${r.exam ? ' &middot; ' + esc(r.exam.label) : ''}.</p>
+      <div class="karte">
+        ${r.faecher.map((f) => `
+          <div class="fach">
+            <div class="kopf"><span>${esc(f.label)}</span><b class="zahl">${f.prozent}%</b></div>
+            <div class="balken"><i style="width:${f.prozent}%"></i></div>
+          </div>`).join('')}
+      </div>
+      ${r.tageBisPruefung !== null ? `<div class="countdown">
+          <span class="tage zahl">${r.tageBisPruefung}</span>
+          <span class="label">Tage bis<br>zur Prüfung</span></div>` : ''}
+      <a class="knopf" href="/" style="text-decoration:none">Mach den Test selbst</a>
+      <p class="hinweis" style="margin-top:12px">Sechs Minuten, kein Konto nötig.</p>`;
+  } catch {
+    app.innerHTML = '<div class="karte"><h2>Dieses Ergebnis gibt es nicht (mehr).</h2>' +
+      '<a class="knopf sekundaer" href="/" style="text-decoration:none">Zur Startseite</a></div>';
+  }
+})();
+</script>
+</body>
+</html>
