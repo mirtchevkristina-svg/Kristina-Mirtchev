@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SUBSUMO Backoffice</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+  main { max-width: 900px; }
+  .zeileliste { border-top: 1px solid var(--line); padding: 10px 0; font-size: 14px; }
+  .zeileliste .titel { color: var(--fg); }
+  .kpi { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  .kpi b { font-variant-numeric: tabular-nums; }
+  .ampel { width: 9px; height: 9px; border-radius: 99px; display: inline-block; margin-right: 7px; }
+  .gruen { background: var(--gut); } .rot { background: var(--schlecht); } .keine_daten { background: var(--fg-3); }
+  .werkzeug { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .werkzeug select, .werkzeug input { min-height: 42px; width: auto; flex: 1 1 160px; }
+  .werkzeug button { width: auto; padding: 10px 16px; min-height: 42px; }
+</style>
+</head>
+<body>
+<header><span class="marke">SUBSUMO</span><span class="kontext">Backoffice</span></header>
+<main id="app"><div class="lade">Token wird geprueft&hellip;</div></main>
+<script>
+/* Backoffice für Review und Kennzahlen.
+   Der Token wird nur im Speicher der Seite gehalten, nicht in localStorage -
+   auf einem geteilten Gerät ist das der sicherere Weg. */
+let TOKEN = new URLSearchParams(location.search).get('token') || '';
+const app = document.getElementById('app');
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const euro = (c) => (c/100).toLocaleString('de-AT', {style:'currency', currency:'EUR'});
+
+async function api(pfad, daten) {
+  const opt = { headers: { 'x-admin-token': TOKEN } };
+  if (daten) { opt.method = 'POST'; opt.headers['content-type'] = 'application/json'; opt.body = JSON.stringify(daten); }
+  const r = await fetch('/api/admin' + pfad, opt);
+  if (r.status === 403) throw new Error('kein_zugang');
+  return r.json();
+}
+
+function tokenAbfrage() {
+  app.innerHTML = `<h1>Backoffice</h1>
+    <div class="karte">
+      <p class="hinweis">ADMIN_TOKEN eingeben (siehe .env).</p>
+      <input type="text" id="t" placeholder="Token" autocomplete="off">
+      <button class="knopf" id="ok" style="margin-top:10px">Öffnen</button>
+    </div>`;
+  document.getElementById('ok').onclick = () => { TOKEN = document.getElementById('t').value.trim(); laden(); };
+}
+
+async function laden() {
+  if (!TOKEN) return tokenAbfrage();
+  let q, k, m;
+  try { [q, k, m] = await Promise.all([api('/queue'), api('/kennzahlen'), api('/meldungen')]); }
+  catch { return tokenAbfrage(); }
+
+  const bestand = (o) => Object.entries(o).map(([s, n]) => `${esc(s)}: ${n}`).join(' &middot; ') || 'leer';
+
+  app.innerHTML = `
+    <h1>Backoffice</h1>
+    ${q.ausspielungUngeprueft ? `<div class="warnbanner"><b>Ungeprueftes Material wird ausgeliefert.</b>
+      Vor dem Verkauf CONTENT_ALLOW_UNREVIEWED=false setzen.</div>` : ''}
+
+    <h2>Review-Warteschlange</h2>
+    <div class="karte">
+      <p class="hinweis">Fragen &mdash; ${bestand(q.bestand.fragen)}<br>
+         Lektionen &mdash; ${bestand(q.bestand.lektionen)}<br>
+         Fälle &mdash; ${bestand(q.bestand.faelle)}</p>
+      <div class="zwischen" style="border-top:1px solid var(--line);padding-top:10px">
+        <span>Offen</span><b>${q.offenGesamt}</b></div>
+      <div class="zwischen" style="padding-top:8px">
+        <span>Geschätzter Prüfaufwand</span><b>${q.geschaetzterPruefaufwand.stunden} Std.</b></div>
+      <p class="hinweis">${esc(q.geschaetzterPruefaufwand.hinweis)}</p>
+    </div>
+
+    <h2>Thema freigeben</h2>
+    <div class="karte">
+      <p class="hinweis">Gibt alle Fragen, Lektionen und Fälle eines Themas frei. Der Prüfername
+         wird an jedem Objekt gespeichert - das ist die Grundlage des Versprechens
+         "KI-erstellt, anwaltlich geprueft".</p>
+      <div class="werkzeug">
+        <input type="text" id="topic" placeholder="Themen-ID, z.B. m-auslegung">
+        <input type="text" id="pruefer" placeholder="Name des Prüfers">
+        <button class="knopf" id="freigeben">Freigeben</button>
+      </div>
+      <p class="hinweis" id="fg-hinweis"></p>
+    </div>
+
+    <h2>Kennzahlen</h2>
+    <div class="karte">
+      ${k.kpis.map((r) => `<div class="kpi">
+        <span><span class="ampel ${r.ampel}"></span>${esc(r.kennzahl)}</span>
+        <b>${r.wert === null ? '&mdash;' : r.wert + r.einheit} <small>(Ziel ${r.richtung === 'über' ? '&ge;' : '&le;'} ${r.ziel}${r.einheit})</small></b>
+      </div>`).join('')}
+      <div class="kpi"><span>${esc(k.leitkennzahl.name)}</span>
+        <b>${k.leitkennzahl.wert === null ? '&mdash;' : k.leitkennzahl.wert}</b></div>
+    </div>
+
+    <h2>Wirtschaftliche Lage</h2>
+    <div class="karte">
+      <div class="kpi"><span>Zahlende Nutzer</span><b>${k.wirtschaft.zahlendeNutzer}</b></div>
+      <div class="kpi"><span>Bruttoumsatz</span><b>${euro(k.wirtschaft.bruttoumsatzCent)}</b></div>
+      <div class="kpi"><span>Deckungsbeitrag</span><b>${euro(k.wirtschaft.deckungsbeitragCent)}</b></div>
+      <div class="kpi"><span>Break-even (Variante A)</span><b>${k.wirtschaft.breakEvenNutzer} Nutzer</b></div>
+      <div class="kpi"><span>Warteliste</span><b>${k.nutzer.warteliste}</b></div>
+      <div class="kpi"><span>Diagnostic-Läufe</span><b>${k.nutzer.diagnosticLaeufe}</b></div>
+      <p class="hinweis">${esc(k.wirtschaft.annahmen.quelle)}</p>
+      <a class="knopf leise" href="/api/admin/export/diagnostic?token=${encodeURIComponent(TOKEN)}"
+         style="text-decoration:none;margin-top:8px">Diagnostic-Rohdaten als CSV</a>
+    </div>
+
+    <h2>Sachfehlermeldungen (${m.length})</h2>
+    <div class="karte">
+      ${m.length ? m.map((f) => `<div class="zeileliste">
+          <span class="titel">${esc(String(f.titel || f.object_id).slice(0, 90))}</span><br>
+          <small>${esc(f.object_type)} &middot; ${esc(f.status)} &middot; ${esc(f.note || '')}</small><br>
+          <div class="werkzeug" style="margin-top:6px">
+            <button class="knopf leise" data-m="${f.id}" data-s="bestaetigt">Bestätigen &amp; sperren</button>
+            <button class="knopf leise" data-m="${f.id}" data-s="verworfen">Verwerfen</button>
+          </div>
+        </div>`).join('') : '<p class="hinweis">Keine Meldungen.</p>'}
+    </div>
+
+    <h2>Offene Objekte</h2>
+    <div class="karte">
+      ${q.offen.slice(0, 60).map((o) => `<div class="zeileliste">
+        <span class="titel">${esc(String(o.titel).slice(0, 110))}</span><br>
+        <small>${esc(o.typ)} &middot; ${esc(o.topic_id)} &middot; ${esc(o.status)} &middot; v${o.version}</small>
+      </div>`).join('')}
+      ${q.offenGesamt > 60 ? `<p class="hinweis">&hellip; und ${q.offenGesamt - 60} weitere.</p>` : ''}
+    </div>`;
+
+  document.getElementById('freigeben').onclick = async () => {
+    const r = await api('/review-thema', {
+      topicId: document.getElementById('topic').value.trim(),
+      pruefer: document.getElementById('pruefer').value.trim()
+    });
+    document.getElementById('fg-hinweis').textContent =
+      r.error ? (r.hinweis || r.error) : `${r.freigegeben} Objekte freigegeben.`;
+    if (!r.error) setTimeout(laden, 800);
+  };
+  app.querySelectorAll('[data-m]').forEach((b) => (b.onclick = async () => {
+    await api('/meldung/' + b.dataset.m, { status: b.dataset.s }); laden();
+  }));
+}
+laden();
+</script>
+</body>
+</html>

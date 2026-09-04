@@ -1,0 +1,212 @@
+/* SUBSUMO - mobile first.
+   Bauprinzipien aus Kapitel 6: Daumenzone unten, Einhandbedienung, keine
+   Interaktion im oberen Bildschirmdrittel, Sessions unter 12 Minuten. */
+
+:root {
+  --bg: #0f1115;
+  --bg-2: #171a21;
+  --bg-3: #1f2430;
+  --line: #2a3040;
+  --fg: #eef1f6;
+  --fg-2: #a4adbe;
+  --fg-3: #6f7a8f;
+  --akzent: #c8a24a;          /* gedecktes Gold - juristischer Absender, kein Startup-Bunt */
+  --akzent-2: #e0be6b;
+  --gut: #4fa87c;
+  --schlecht: #d2685f;
+  --warn: #d99a3a;
+  --r: 14px;
+  --tap: 52px;                /* Mindestgroesse fuer Daumenbedienung */
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f7f5; --bg-2: #ffffff; --bg-3: #eeefec; --line: #dcdedb;
+    --fg: #14171d; --fg-2: #4d5566; --fg-3: #7b8496;
+    --akzent: #8a6a1d; --akzent-2: #6d5316;
+  }
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: var(--bg); color: var(--fg);
+  font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  overscroll-behavior-y: none;
+}
+
+body { display: flex; flex-direction: column; }
+
+/* ---------- Kopfzeile: reine Anzeige, keine Bedienelemente ---------- */
+header {
+  position: sticky; top: 0; z-index: 20;
+  padding: max(12px, env(safe-area-inset-top)) 16px 10px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: baseline; gap: 10px;
+}
+header .marke { font-weight: 700; letter-spacing: .14em; font-size: 13px; color: var(--akzent); }
+header .kontext { font-size: 12px; color: var(--fg-3); margin-left: auto; }
+
+main { flex: 1; padding: 16px 16px calc(96px + var(--safe-b)); max-width: 640px; width: 100%; margin: 0 auto; }
+
+h1 { font-size: 26px; line-height: 1.2; margin: 6px 0 10px; letter-spacing: -.01em; }
+h2 { font-size: 18px; margin: 22px 0 8px; }
+h3 { font-size: 15px; margin: 16px 0 6px; color: var(--fg-2); }
+p  { margin: 0 0 12px; color: var(--fg-2); }
+a  { color: var(--akzent-2); }
+small { color: var(--fg-3); }
+
+/* ---------- Bausteine ---------- */
+.karte {
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 16px; margin-bottom: 12px;
+}
+.karte.flach { background: transparent; }
+
+.knopf {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; min-height: var(--tap); padding: 14px 18px;
+  border: 0; border-radius: var(--r); font: inherit; font-weight: 600;
+  background: var(--akzent); color: #14171d; cursor: pointer;
+  transition: transform .08s ease, opacity .15s ease;
+}
+.knopf:active { transform: scale(.985); }
+.knopf[disabled] { opacity: .45; cursor: default; }
+.knopf.sekundaer { background: var(--bg-3); color: var(--fg); border: 1px solid var(--line); }
+.knopf.leise { background: transparent; color: var(--fg-2); border: 1px solid var(--line); min-height: 44px; font-weight: 500; }
+
+input[type=text], input[type=email], input[type=number], textarea, select {
+  width: 100%; min-height: var(--tap); padding: 13px 14px;
+  background: var(--bg-3); color: var(--fg);
+  border: 1px solid var(--line); border-radius: 12px; font: inherit;
+}
+textarea { min-height: 180px; resize: vertical; line-height: 1.6; }
+label.zeile { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; font-size: 14px; color: var(--fg-2); }
+label.zeile input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--akzent); }
+
+.hinweis { font-size: 13px; color: var(--fg-3); line-height: 1.5; }
+.warnbanner {
+  background: color-mix(in srgb, var(--warn) 16%, var(--bg-2));
+  border: 1px solid var(--warn); color: var(--fg);
+  border-radius: 12px; padding: 12px 14px; font-size: 13px; margin-bottom: 14px;
+}
+
+.reihe { display: flex; gap: 10px; align-items: center; }
+.reihe > * { flex: 1; }
+.zwischen { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+
+.marke-gross { font-size: 42px; font-weight: 800; letter-spacing: -.02em; line-height: 1; }
+.zahl { font-variant-numeric: tabular-nums; }
+
+/* ---------- Countdown ---------- */
+.countdown { display: flex; align-items: baseline; gap: 10px; margin: 4px 0 14px; }
+.countdown .tage { font-size: 54px; font-weight: 800; letter-spacing: -.03em; color: var(--akzent); font-variant-numeric: tabular-nums; }
+.countdown .label { font-size: 13px; color: var(--fg-3); }
+
+/* ---------- Fortschrittsbalken ---------- */
+.balken { height: 8px; border-radius: 99px; background: var(--bg-3); overflow: hidden; }
+.balken > i { display: block; height: 100%; background: var(--akzent); border-radius: 99px; transition: width .3s ease; }
+.balken.duenn { height: 5px; }
+
+/* ---------- Fragekarte ---------- */
+.stapel { position: relative; min-height: 46vh; }
+.fragekarte {
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: 18px;
+  padding: 20px; touch-action: pan-y;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.fragekarte.raus-links  { transform: translateX(-120%) rotate(-8deg); opacity: 0; }
+.fragekarte.raus-rechts { transform: translateX(120%) rotate(8deg); opacity: 0; }
+.fragekarte .frage { font-size: 18px; line-height: 1.45; color: var(--fg); margin-bottom: 4px; }
+.fragekarte .thema { font-size: 12px; color: var(--fg-3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+
+/* Antwortoptionen liegen unten - Daumenzone. */
+.optionen { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.option {
+  min-height: var(--tap); padding: 14px 16px; text-align: left;
+  background: var(--bg-3); color: var(--fg); border: 1px solid var(--line);
+  border-radius: 12px; font: inherit; cursor: pointer; line-height: 1.4;
+  display: flex; gap: 12px; align-items: center;
+}
+.option:active { transform: scale(.99); }
+.option .marker {
+  flex: none; width: 26px; height: 26px; border-radius: 8px; background: var(--bg-2);
+  border: 1px solid var(--line); display: grid; place-items: center;
+  font-size: 12px; color: var(--fg-3); font-weight: 700;
+}
+.option.richtig { border-color: var(--gut); background: color-mix(in srgb, var(--gut) 18%, var(--bg-3)); }
+.option.falsch  { border-color: var(--schlecht); background: color-mix(in srgb, var(--schlecht) 18%, var(--bg-3)); }
+
+.aufloesung { margin-top: 14px; padding: 14px; border-radius: 12px; background: var(--bg-3); border: 1px solid var(--line); font-size: 14px; }
+.aufloesung.gut { border-color: var(--gut); }
+.aufloesung.schlecht { border-color: var(--schlecht); }
+
+/* ---------- Fachprofil ---------- */
+.fach { margin-bottom: 14px; }
+.fach .kopf { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+.fach .kopf b { font-variant-numeric: tabular-nums; }
+
+/* ---------- Blockliste im Tagesplan ---------- */
+.block {
+  display: flex; gap: 14px; align-items: center; width: 100%;
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--r);
+  padding: 14px 16px; margin-bottom: 10px; text-align: left; font: inherit; color: var(--fg); cursor: pointer;
+}
+.block .icon { flex: none; width: 42px; height: 42px; border-radius: 12px; background: var(--bg-3); display: grid; place-items: center; font-size: 19px; }
+.block .titel { font-weight: 600; }
+.block .unter { font-size: 13px; color: var(--fg-3); }
+.block .dauer { margin-left: auto; font-size: 13px; color: var(--fg-3); white-space: nowrap; }
+.block.gesperrt { opacity: .55; }
+
+/* ---------- Untere Navigation: die einzige feste Bedienleiste ---------- */
+nav.unten {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  display: flex; background: color-mix(in srgb, var(--bg-2) 94%, transparent);
+  backdrop-filter: blur(12px); border-top: 1px solid var(--line);
+  padding-bottom: var(--safe-b);
+}
+nav.unten a {
+  flex: 1; padding: 10px 4px 12px; text-align: center; text-decoration: none;
+  color: var(--fg-3); font-size: 11px; min-height: var(--tap);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+}
+nav.unten a.aktiv { color: var(--akzent); }
+nav.unten .glyph { font-size: 19px; line-height: 1; }
+
+/* ---------- Fortschrittsleiste einer Session ---------- */
+.sessionkopf { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.sessionkopf .balken { flex: 1; }
+.sessionkopf .zaehler { font-size: 13px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+
+/* ---------- Ergebniskarte 9:16 ---------- */
+#karte-canvas { width: 100%; max-width: 340px; border-radius: 16px; display: block; margin: 0 auto 14px; border: 1px solid var(--line); }
+
+/* ---------- Lektionstext ---------- */
+.lektion { font-size: 16px; line-height: 1.65; }
+.lektion h2 { font-size: 17px; margin: 20px 0 8px; color: var(--fg); }
+.lektion table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; display: block; overflow-x: auto; }
+.lektion th, .lektion td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+.lektion th { background: var(--bg-3); }
+.lektion ul, .lektion ol { padding-left: 20px; color: var(--fg-2); }
+.lektion li { margin-bottom: 6px; }
+.lektion strong { color: var(--fg); }
+
+/* ---------- Marke ---------- */
+.plakette { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; padding: 4px 9px; border-radius: 99px; border: 1px solid var(--line); color: var(--fg-3); background: var(--bg-3); }
+.plakette.geprueft { border-color: var(--gut); color: var(--gut); }
+.plakette.ungeprueft { border-color: var(--warn); color: var(--warn); }
+
+.lade { text-align: center; padding: 40px 0; color: var(--fg-3); }
+
+@media (min-width: 700px) {
+  nav.unten { max-width: 640px; margin: 0 auto; border-radius: 16px 16px 0 0; border: 1px solid var(--line); border-bottom: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+nav.unten[hidden] { display: none; }

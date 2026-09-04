@@ -1,0 +1,19 @@
+{
+  "name": "subsumo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Adaptive, mobile-first Pruefungsvorbereitung fuer die StEOP am Juridicum Wien",
+  "type": "commonjs",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "seed": "node scripts/seed.js",
+    "reset": "node scripts/seed.js --reset",
+    "smoke": "node scripts/smoke.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.5.0",
+    "express": "^4.21.1"
+  }
+}

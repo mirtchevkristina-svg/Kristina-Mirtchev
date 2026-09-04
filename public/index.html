@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1115">
+<meta name="description" content="Adaptive Prüfungsvorbereitung für die StEOP am Juridicum Wien.">
+<title>SUBSUMO</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header>
+  <span class="marke">SUBSUMO</span>
+  <span class="kontext" id="kontext"></span>
+</header>
+
+<main id="app"><div class="lade">Lade&hellip;</div></main>
+
+<nav class="unten" id="nav" hidden>
+  <a href="#/plan"        data-route="plan"><span class="glyph">&#9635;</span>Plan</a>
+  <a href="#/lernen"      data-route="lernen"><span class="glyph">&#9998;</span>Lernen</a>
+  <a href="#/fortschritt" data-route="fortschritt"><span class="glyph">&#9650;</span>Fortschritt</a>
+  <a href="#/konto"       data-route="konto"><span class="glyph">&#9675;</span>Konto</a>
+</nav>
+
+<script src="/app.js"></script>
+</body>
+</html>
