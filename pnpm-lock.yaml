@@ -27,7 +27,19 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.4)
 
+  lib/audit: {}
+
+  lib/claim-state: {}
+
+  lib/legal-config:
+    dependencies:
+      '@fp/money':
+        specifier: workspace:*
+        version: link:../money
+
   lib/money: {}
+
+  lib/privacy: {}
 
 packages:
 
