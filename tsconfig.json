@@ -6,6 +6,7 @@
     { "path": "lib/claim-state" },
     { "path": "lib/audit" },
     { "path": "lib/privacy" },
-    { "path": "lib/fee-engine" }
+    { "path": "lib/fee-engine" },
+    { "path": "db" }
   ]
 }
