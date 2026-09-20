@@ -122,6 +122,22 @@ export function validateRegistry(registry: Registry): ValidationIssue[] {
       }
       // Gesetzlicher Hoechstsatz: ein zu hoch konfigurierter Erfolgshonorar-
       // satz ist ein Konfigurationsfehler, der den Start verhindern muss.
+      // Eine durch eine offene Rechtsfrage gesperrte Erloessaeule darf
+      // nicht aktiv sein. Das ist kein Hinweis, sondern ein Startfehler.
+      if (key === 'revenue_model') {
+        const model = version.value as ParameterMap['revenue_model'];
+        for (const [stream, rule] of Object.entries(model.streams)) {
+          if (rule.blockedBy !== null && rule.enabled) {
+            issues.push({
+              key,
+              versionId: version.id,
+              message:
+                `Erloessaeule "${stream}" ist aktiv, obwohl sie durch ` +
+                `${rule.blockedBy} gesperrt ist`,
+            });
+          }
+        }
+      }
       if (key === 'success_fee') {
         const rule = version.value as ParameterMap['success_fee'];
         for (const tier of rule.tiers) {

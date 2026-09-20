@@ -346,6 +346,36 @@ export const demoRegistry: Registry = {
     'zu belegen: GGG (Gerichtsgebuehren) und RATG (Anwaltskosten)',
   ),
 
+  revenue_model: demo(
+    'revenue_model',
+    'Die drei Erloessaeulen, jede einzeln schaltbar',
+    'demo-revenue-model-v1',
+    'L-20',
+    {
+      streams: {
+        creditor_success_fee: {
+          enabled: true,
+          blockedBy: null,
+          note: 'Traegt das Grundgeschaeft und haengt an keiner offenen Frage.',
+        },
+        creditor_collection_fee: {
+          enabled: false,
+          blockedBy: 'L-20',
+          note:
+            'Gesperrt bis zur Klaerung, ob bei vorab vereinbarter Stundung und ' +
+            'Verzicht ein ersatzfaehiger Schaden des Glaeubigers entsteht.',
+        },
+        debtor_recoverable_costs: {
+          enabled: false,
+          blockedBy: 'L-20',
+          note:
+            'Gesperrt bis zur Klaerung von L-20; zusaetzlich abhaengig von der ' +
+            'Gewerbeberechtigung nach L-01.',
+        },
+      },
+    },
+  ),
+
   cost_liability: demo(
     'cost_liability',
     'Stundungs- und Verzichtskonstruktion fuer die Inkassokosten',

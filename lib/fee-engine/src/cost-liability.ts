@@ -24,7 +24,8 @@
  */
 
 import { type Money, ZERO, add, compare, isNegative, min, subtract } from '@fp/money';
-import type { CostLiabilityRule } from '@fp/legal-config';
+import type { CostLiabilityRule, RevenueModelRule } from '@fp/legal-config';
+import { assertStreamEnabled } from './revenue-gate.js';
 
 export class CostLiabilityError extends Error {
   override readonly name = 'CostLiabilityError';
@@ -58,7 +59,9 @@ export function openCostLiability(
   claimId: string,
   total: Money,
   openedAt: Date,
+  revenueModel?: RevenueModelRule,
 ): CostLiability {
+  if (revenueModel) assertStreamEnabled(revenueModel, 'creditor_collection_fee');
   if (!rule.creditorOwesAtOrder) {
     throw new CostLiabilityError(
       'Die Konfiguration sieht keine Kostenforderung gegen den Glaeubiger vor. ' +

@@ -38,6 +38,8 @@ import type {
   ProcessingCostTier,
 } from '@fp/legal-config';
 import { formatBasisPoints } from '@fp/legal-config';
+import type { RevenueModelRule } from '@fp/legal-config';
+import { assertStreamEnabled } from './revenue-gate.js';
 import { isIndexUnverified, resolveIndexedAmount } from './indexed.js';
 
 export class DebtorCostError extends Error {
@@ -103,7 +105,11 @@ export function computeDebtorCosts(
   schedule: DebtorCostSchedule,
   input: DebtorCostInput,
   flatFee?: CommercialFlatFeeRule,
+  revenueModel?: RevenueModelRule,
 ): DebtorCostResult {
+  // L-20 ist ein Go/No-Go, kein Detail: ohne freigeschaltete Saeule wird
+  // hier nicht gerechnet, auch nicht versuchsweise.
+  if (revenueModel) assertStreamEnabled(revenueModel, 'debtor_recoverable_costs');
   if (compare(input.principal, ZERO) <= 0) {
     throw new DebtorCostError('Die Hauptforderung muss groesser als null sein');
   }

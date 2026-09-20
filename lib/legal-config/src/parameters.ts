@@ -198,6 +198,45 @@ export interface CommercialFlatFeeRule {
   readonly businessDebtorsOnly: boolean;
 }
 
+/**
+ * Die drei Erloessaeulen, jede einzeln schaltbar.
+ *
+ * Sie sind bewusst getrennt, weil sie an unterschiedlichen Rechtsfragen
+ * haengen und unterschiedlich ausfallen koennen:
+ *
+ *  - `creditor_success_fee` - Erfolgshonorar des Glaeubigers. Haengt an
+ *    keiner offenen Frage und traegt das Grundgeschaeft allein.
+ *  - `creditor_collection_fee` - die bei Auftragserteilung begruendete,
+ *    gestundete Kostenforderung gegen den Glaeubiger.
+ *  - `debtor_recoverable_costs` - die beim Schuldner geltend gemachten
+ *    Kosten. Haengt an L-20 (ersatzfaehiger Schaden) und L-01
+ *    (Gewerbeberechtigung).
+ *
+ * Faellt L-20 negativ aus, werden die beiden hinteren Saeulen abgeschaltet
+ * und das Grundgeschaeft laeuft unveraendert weiter. Kein Umbau der
+ * Plattform, nur eine Konfigurationsaenderung.
+ */
+export type RevenueStream =
+  | 'creditor_success_fee'
+  | 'creditor_collection_fee'
+  | 'debtor_recoverable_costs';
+
+export interface RevenueStreamRule {
+  readonly enabled: boolean;
+  /**
+   * Offene Rechtsfrage, die diese Saeule sperrt, z. B. "L-20".
+   * `null` = keine Sperre. Ist ein Wert gesetzt, darf `enabled` nicht
+   * true sein; die Registry-Pruefung setzt das durch.
+   */
+  readonly blockedBy: string | null;
+  /** Begruendung fuer den aktuellen Stand, fuer Betrieb und Review. */
+  readonly note: string;
+}
+
+export interface RevenueModelRule {
+  readonly streams: Readonly<Record<RevenueStream, RevenueStreamRule>>;
+}
+
 /** Stufen der aussergerichtlichen Eskalation. */
 export type EscalationStage =
   | 'friendly_reminder'
@@ -341,6 +380,7 @@ export interface ParameterMap {
   readonly debtor_cost_schedule: DebtorCostSchedule;
   readonly escalation_policy: EscalationPolicy;
   readonly litigation_cost_estimate: LitigationCostRule;
+  readonly revenue_model: RevenueModelRule;
   readonly cost_liability: CostLiabilityRule;
   readonly commercial_flat_fee: CommercialFlatFeeRule;
   readonly success_fee: SuccessFeeRule;
