@@ -79,14 +79,181 @@ export const demoRegistry: Registry = {
 
   success_fee: demo(
     'success_fee',
-    'Erfolgshonorar auf bestaetigte Zahlungen',
-    'demo-success-fee-v1',
+    'Erfolgshonorar, gestaffelt nach Hauptforderung, angewandt auf den ' +
+      'tatsaechlich eingebrachten Betrag',
+    'demo-success-fee-v2',
     'L-04',
     {
-      basisPoints: 1000,
+      // Stufenauswahl nach Hauptforderung, Anwendung auf den eingebrachten
+      // Betrag. Alle Saetze liegen unter dem Hoechstsatz von 15 %.
+      tiers: [
+        { uptoPrincipalCents: '50000', basisPoints: 1000 },
+        { uptoPrincipalCents: '150000', basisPoints: 900 },
+        { uptoPrincipalCents: '500000', basisPoints: 700 },
+        { uptoPrincipalCents: '1000000', basisPoints: 600 },
+        { uptoPrincipalCents: null, basisPoints: 500 },
+      ],
       vatBasisPoints: 2000,
       basis: 'principal_only',
       minimumCents: null,
+    },
+  ),
+
+  debtor_cost_schedule: demo(
+    'debtor_cost_schedule',
+    'Schuldnerseitige Hoechstsaetze nach § 3 und der Anteil, den das Portal ' +
+      'davon tatsaechlich ansetzt',
+    'demo-debtor-costs-v1',
+    'L-02',
+    {
+      // Basisbetraege laut Verordnungstext. Der Indexfaktor steht auf 10000,
+      // also unveraendert gegenueber der Basis - das ist NICHT der geltende
+      // Stand, sondern ein Platzhalter bis zur Klaerung von L-17.
+      processingCostTiers: [
+        {
+          uptoPrincipal: {
+            baseAmountCents: '7300',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          basisPoints: null,
+          fixedAmount: {
+            baseAmountCents: '2035',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+        },
+        {
+          uptoPrincipal: {
+            baseAmountCents: '36400',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          basisPoints: 2200,
+          fixedAmount: null,
+        },
+        {
+          uptoPrincipal: {
+            baseAmountCents: '72700',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          basisPoints: 1700,
+          fixedAmount: null,
+        },
+        { uptoPrincipal: null, basisPoints: 800, fixedAmount: null },
+      ],
+      // Das Portal setzt bewusst weniger an als der Hoechstsatz zulaesst.
+      // Die konkrete Hoehe ist eine Geschaeftsentscheidung (L-18).
+      processingPolicyShareBasisPoints: 6000,
+      measureCaps: [
+        {
+          measure: 'first_reminder',
+          cap: {
+            baseAmountCents: '5087',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          minimumPrincipal: {
+            baseAmountCents: '72700',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          policyShareBasisPoints: 5000,
+        },
+        {
+          measure: 'second_reminder',
+          cap: {
+            baseAmountCents: '5814',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          minimumPrincipal: {
+            baseAmountCents: '72700',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          policyShareBasisPoints: 7500,
+        },
+        {
+          measure: 'further_reminder',
+          cap: {
+            baseAmountCents: '5814',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          minimumPrincipal: null,
+          policyShareBasisPoints: 10_000,
+        },
+        {
+          measure: 'installment_agreement',
+          cap: {
+            baseAmountCents: '5814',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          minimumPrincipal: null,
+          // Eine Ratenvereinbarung soll nicht zusaetzlich belasten.
+          policyShareBasisPoints: 0,
+        },
+        {
+          measure: 'deferral_agreement',
+          cap: {
+            baseAmountCents: '5814',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          minimumPrincipal: null,
+          policyShareBasisPoints: 0,
+        },
+        {
+          measure: 'settlement_agreement',
+          cap: {
+            baseAmountCents: '5814',
+            indexFactorBasisPoints: 10_000,
+            indexReference: 'ungeprueft, siehe L-17',
+          },
+          minimumPrincipal: null,
+          policyShareBasisPoints: 0,
+        },
+      ],
+      allowWithoutAppropriatenessCheck: false,
+    },
+    'zu pruefen: § 3 Verordnung BGBl 141/1996, § 1333 Abs 2 ABGB',
+  ),
+
+  escalation_policy: demo(
+    'escalation_policy',
+    'Stufen der aussergerichtlichen Eskalation und je Stufe zulaessige Massnahmen',
+    'demo-escalation-v1',
+    'L-09',
+    {
+      stages: [
+        {
+          stage: 'friendly_reminder',
+          permittedMeasures: [],
+          deadlineDays: 14,
+          requiresHumanApproval: false,
+        },
+        {
+          stage: 'collection_notice',
+          permittedMeasures: ['first_reminder'],
+          deadlineDays: 14,
+          requiresHumanApproval: false,
+        },
+        {
+          stage: 'final_notice',
+          permittedMeasures: ['second_reminder', 'installment_agreement'],
+          deadlineDays: 14,
+          requiresHumanApproval: true,
+        },
+        {
+          stage: 'legal_review',
+          permittedMeasures: [],
+          deadlineDays: 0,
+          requiresHumanApproval: true,
+        },
+      ],
     },
   ),
 

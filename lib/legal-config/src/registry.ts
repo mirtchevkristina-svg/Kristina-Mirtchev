@@ -123,16 +123,21 @@ export function validateRegistry(registry: Registry): ValidationIssue[] {
       // Gesetzlicher Hoechstsatz: ein zu hoch konfigurierter Erfolgshonorar-
       // satz ist ein Konfigurationsfehler, der den Start verhindern muss.
       if (key === 'success_fee') {
-        const rate = (version.value as ParameterMap['success_fee']).basisPoints;
-        if (rate > MAX_SUCCESS_FEE_BASIS_POINTS) {
-          issues.push({
-            key,
-            versionId: version.id,
-            message:
-              `Erfolgshonorarsatz ${formatBasisPoints(rate)} ueberschreitet den Hoechstsatz ` +
-              `von ${formatBasisPoints(MAX_SUCCESS_FEE_BASIS_POINTS)} ` +
-              '(§ 2 Verordnung BGBl 141/1996 idF BGBl II 103/2005)',
-          });
+        const rule = version.value as ParameterMap['success_fee'];
+        for (const tier of rule.tiers) {
+          if (tier.basisPoints > MAX_SUCCESS_FEE_BASIS_POINTS) {
+            issues.push({
+              key,
+              versionId: version.id,
+              message:
+                `Erfolgshonorarsatz ${formatBasisPoints(tier.basisPoints)} ueberschreitet den ` +
+                `Hoechstsatz von ${formatBasisPoints(MAX_SUCCESS_FEE_BASIS_POINTS)} ` +
+                '(§ 2 Verordnung BGBl 141/1996 idF BGBl II 103/2005)',
+            });
+          }
+        }
+        if (rule.tiers.length === 0) {
+          issues.push({ key, versionId: version.id, message: 'Staffel enthaelt keine Stufe' });
         }
       }
     }

@@ -125,7 +125,7 @@ describe('Registry-Validierung gegen den Hoechstsatz', () => {
             ...demoRegistry.success_fee.versions[0]!,
             value: {
               ...demoRegistry.success_fee.versions[0]!.value,
-              basisPoints: 2500,
+              tiers: [{ uptoPrincipalCents: null, basisPoints: 2500 }],
             },
           },
         ],

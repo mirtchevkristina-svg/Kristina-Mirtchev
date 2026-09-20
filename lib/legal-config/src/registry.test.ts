@@ -51,7 +51,7 @@ describe('demoRegistry', () => {
 describe('resolve', () => {
   it('liefert die zum Zeitpunkt gueltige Version', () => {
     const version = resolve(demoRegistry, 'success_fee', NOW);
-    expect(version.id).toBe('demo-success-fee-v1');
+    expect(version.id).toBe('demo-success-fee-v2');
   });
 
   it('waehlt zwischen mehreren Versionen nach Zeitpunkt', () => {
@@ -62,14 +62,14 @@ describe('resolve', () => {
         versions: [
           {
             id: 'v1',
-            value: { basisPoints: 1000, vatBasisPoints: 2000, basis: 'principal_only', minimumCents: null },
+            value: { tiers: [{ uptoPrincipalCents: null, basisPoints: 1000 }], vatBasisPoints: 2000, basis: 'principal_only', minimumCents: null },
             validFrom: new Date('2020-01-01T00:00:00Z'),
             validTo: new Date('2026-01-01T00:00:00Z'),
             status: 'SUPERSEDED',
           },
           {
             id: 'v2',
-            value: { basisPoints: 1200, vatBasisPoints: 2000, basis: 'principal_only', minimumCents: null },
+            value: { tiers: [{ uptoPrincipalCents: null, basisPoints: 1200 }], vatBasisPoints: 2000, basis: 'principal_only', minimumCents: null },
             validFrom: new Date('2026-01-01T00:00:00Z'),
             validTo: null,
             status: 'APPROVED',
@@ -91,7 +91,7 @@ describe('resolve', () => {
         versions: [
           {
             id: 'v1',
-            value: { basisPoints: 1000, vatBasisPoints: 2000, basis: 'principal_only', minimumCents: null },
+            value: { tiers: [{ uptoPrincipalCents: null, basisPoints: 1000 }], vatBasisPoints: 2000, basis: 'principal_only', minimumCents: null },
             validFrom: new Date('2030-01-01T00:00:00Z'),
             validTo: null,
             status: 'DEMO_ONLY',
@@ -168,7 +168,7 @@ describe('validateRegistry', () => {
       description: 'test',
       versions: [
         {
-          id: 'demo-success-fee-v1',
+          id: 'demo-success-fee-v2',
           value: { firstRequestDays: 14, reminderIntervalDays: [], objectionResponseDays: 14 },
           validFrom: new Date('2020-01-01T00:00:00Z'),
           validTo: null,
@@ -222,7 +222,7 @@ describe('assertStartupSafe', () => {
           })),
         },
       ]),
-    ) as Registry;
+    ) as unknown as Registry;
 
     expect(() => assertStartupSafe(approved, { allowDemoValues: false, now: NOW })).not.toThrow();
   });
@@ -249,7 +249,7 @@ describe('assertStartupSafe', () => {
           ],
         },
       ]),
-    ) as Registry;
+    ) as unknown as Registry;
 
     expect(() => assertStartupSafe(expired, { allowDemoValues: false, now: NOW })).not.toThrow();
   });

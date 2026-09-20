@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "lib/money" },
+    { "path": "lib/legal-config" },
+    { "path": "lib/claim-state" },
+    { "path": "lib/audit" },
+    { "path": "lib/privacy" },
+    { "path": "lib/fee-engine" }
+  ]
+}
