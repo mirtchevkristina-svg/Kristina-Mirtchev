@@ -204,10 +204,50 @@ Siehe **L-16** in docs/LEGAL_OPEN_QUESTIONS.md.
 
 ---
 
+## 6a. Marktbefund: ein Teil des Wettbewerbs ist für den Gläubiger kostenlos
+
+*Ergänzung 20.09.2026. Recherche der Auftraggeberin, nicht eigenständig verifiziert.*
+
+Mehrere österreichische Anbieter treten gegenüber dem Gläubiger kosten- und risikofrei auf
+und finanzieren sich über die schuldnerseitigen Kosten nach § 3 der Höchstsatzverordnung.
+Ein Anbieter nimmt dabei ausdrücklich auch Privatpersonen als Auftraggeber an; ein
+etablierter Anbieter verrechnet dagegen eine Auftragsgebühr und nimmt nur Unternehmen.
+
+**Folge [Inferenz, M-H]:** „30 € vorab plus 15 %" ist für den Gläubiger teurer als ein Teil
+des Marktes. Es braucht entweder ein tragfähiges Gegenargument — ein transparenter,
+schuldnerschonender Ansatz ist eines, deckt sich mit der Designrichtung und ist gegenüber
+Konsumentenschutz und Aufsicht gut vertretbar — oder eine Änderung des Modells.
+
+Die drei technischen Optionen und was sie jeweils erfordern, stehen in
+docs/LEGAL_OPEN_QUESTIONS.md unter **L-18**. Das ist eine Geschäftsentscheidung, keine
+Rechtsfrage; der Code nimmt sie nicht vorweg.
+
+## 6b. Geldwäscherecht: vermutlich nicht betroffen
+
+Nach der Darstellung des Wirtschaftsministeriums sind nur bestimmte Gewerbe erfasst, etwa
+Büroservice, Handel, Immobilienmakler und Unternehmensberater. Inkassoinstitute waren in
+der eingesehenen Liste nicht erkennbar; die Liste war allerdings abgeschnitten.
+[Recherche der Auftraggeberin, moderate Konfidenz]
+
+**Bis zur Klärung keine technische Konsequenz.** Sollte sich das ändern, wären
+Identifizierungs- und Aufzeichnungspflichten gegenüber dem Auftraggeber betroffen — das
+Profil erhebt heute bereits Name, Anschrift, IBAN und bei Unternehmen die Firmenbuch- und
+UID-Nummer, was eine brauchbare Grundlage wäre.
+
+## 6c. Noch nicht geklärt
+
+- Aktueller Volltext der Inkassoinstitute-Verordnung in der Fassung 2008 — das RIS
+  blockiert den automatischen Zugriff.
+- § 4 der Höchstsatzverordnung im geltenden Wortlaut: nur indirekt belegt (siehe L-13).
+- Pflicht zur Vermögensschaden-Haftpflichtversicherung und die Standesregeln für
+  Inkassoinstitute im Volltext: nicht recherchiert.
+
+---
+
 ## 7. Top 10 – Reihenfolge nach Hebelwirkung
 
 1. Gewerbefrage § 118 GewO klären (Existenzfrage)
-2. Gebührendeckel technisch erzwingen: `min(30 €, 6 %)` und 15 %-Obergrenze (Abschnitt 1.3, korrigiert)
+2. Preismodell entscheiden (L-18) — bestimmt Preisregel, Schuldnertexte und Positionierung
 3. Verjährungswarnung + Anerkenntnis-Dokumentation
 4. Insolvenzcheck vor Kontakt
 5. Statusmodell entflechten + Back-Office-RBAC

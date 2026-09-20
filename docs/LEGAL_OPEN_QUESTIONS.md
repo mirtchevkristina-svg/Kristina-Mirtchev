@@ -21,10 +21,12 @@ Code deshalb bewusst keine Entscheidung trifft. Die IDs werden im Quelltext als
 | L-10 | Verjährungswarnung | offen | Hinweisfunktion |
 | L-11 | Rolle der Kanzlei, Standesrecht | offen | Kanzleiübergabe, Aussenauftritt |
 | L-12 | Aufbewahrung und Löschung | offen | Löschkonzept |
-| L-13 | Höchstsätze netto oder brutto | offen | Gebührenberechnung |
+| L-13 | Höchstsätze netto oder brutto | **geklärt** (netto) | — |
 | L-14 | Gesamtdeckel: Verschiebung zwischen Posten | offen | Gebührenberechnung |
 | L-15 | Feststellung eines 40 %-Sonderfalls | offen | Erfolgshonorar |
 | L-16 | Zustimmungsfiktion bei Zahlungsbestätigung | offen | Rechnungsauslösung |
+| L-17 | Indexanpassung der Eurobeträge | offen | jeder Eurobetrag aus der Verordnung |
+| L-18 | Preismodell: wer trägt die Kosten | offen | Preisregel, Schuldnertexte, Positionierung |
 
 ---
 
@@ -55,6 +57,17 @@ Gewerbefrage nach hiesiger Einschätzung **nicht**. [Inferenz]
 ---
 
 ## L-02 — Werden Portalkosten dem Schuldner angelastet?
+
+> **Ergänzung 20.09.2026.** § 3 der Verordnung regelt eine eigene Schuldnergebühr.
+> Beispiele laut Text, **vor Indexanpassung** (siehe L-17): allgemeine Bearbeitungskosten
+> bei Forderungen über 727 € bis zu 8 %; erste Mahnung über 727 € bis zu 50,87 €; zweite
+> und weitere Mahnungen bis zu 58,14 €, dieselben Sätze für Ratenzahlungs- und
+> Vergleichsvereinbarungen; Evidenzhaltung über 364 € bis zu 20,35 € je angefangenem
+> Vierteljahr. [RIS-verifiziert für den Verordnungstext]
+>
+> Genau darüber finanzieren sich mehrere Mitbewerber, die für den Gläubiger kostenlos
+> auftreten (siehe L-18). Ob diese Kosten im Einzelfall ersatzfähig sind, richtet sich
+> zusätzlich nach § 1333 Abs 2 ABGB, also nach der Angemessenheit. [Gesetz/TD, hoch]
 
 **Kontext.** Ob Auftragsgebühr und Erfolgshonorar vom Schuldner als Betreibungskosten
 zurückgefordert werden, bestimmt Betragsaufstellung, Schuldnertexte und Rechtsgrundlagen-
@@ -207,11 +220,38 @@ nach RAO und RL-BA 2015 zu prüfen — insbesondere bei wirtschaftlicher Beteili
 Quota-litis-Verbot (§ 879 Abs 2 Z 2 ABGB), wenn Erfolgshonorar-Erlöse mittelbar der Kanzlei
 zufließen. [Gesetz/TD, moderat; Paragraphen nicht verifiziert]
 
+> **Ergänzung 20.09.2026, aus der RL-BA der RAK Wien.** Einschränkung: das gelesene
+> Dokument trägt den Stand 10.05.2011; heute gilt nach Trainingsdatenlage die RL-BA 2015,
+> der Inhalt kann sich geändert haben.
+>
+> - **Für Rechtsanwaltsanwärter:** Eine nebenberufliche Tätigkeit bedarf der Zustimmung des
+>   Rechtsanwalts. Die Kammer kann zusätzlich ihre eigene Zustimmung verlangen, darf sie
+>   aber nur versagen, wenn die Ausbildung beeinträchtigt wird.
+> - **Für die Kanzlei:** Unzulässig ist das Anbieten oder Gewähren von Vorteilen für
+>   Mandatszuführungen. Eine Provision darf ein Rechtsanwalt **ausnahmslos** nicht
+>   vereinbaren.
+>
+> **Folge [Inferenz, moderat]:** Zwischen der Betreibergesellschaft und der
+> Kooperationskanzlei darf für übergebene Fälle **weder Geld noch ein sonstiger Vorteil
+> fließen, in keine Richtung**. Die Kanzlei wird ausschließlich aufgrund eines direkten
+> Mandats des Gläubigers tätig.
+
 **Technische Vorgabe unabhängig davon.** Keine Datenübermittlung an die Kanzlei vor
 ausdrücklicher Freigabe durch den Gläubiger; getrennte Datenräume; keine UI-Formulierung, die
 ein bestehendes Mandat suggeriert.
 
-**Blockiert.** Nennung des Kanzleinamens im Produktivbetrieb.
+**Zusätzliche technische Vorgabe aus der Ergänzung.** Das Datenmodell bildet **keine**
+Zahlungs-, Provisions- oder Vergütungsbeziehung zwischen Portalbetreiber und Kanzlei ab —
+auch nicht als optionales Feld, auch nicht als Null-Betrag. Eine Übergabe erzeugt einen
+Mandatsvorgang beim Gläubiger, keine Abrechnungsposition zwischen den beiden Gesellschaften.
+Die Eskalation im Zustandsmodell ist bereits so gebaut: sie erzeugt eine dokumentierte
+Freigabe und einen Export, aber keinen Zahlungsvorgang.
+
+**Offen.** Ob die RL-BA 2015 diese Punkte unverändert enthält. Ob eine nebenberufliche
+Beteiligung der Kammer anzuzeigen oder von ihr zu genehmigen ist.
+
+**Blockiert.** Nennung des Kanzleinamens im Produktivbetrieb; jede Gestaltung, bei der
+Erfolgshonorar-Erlöse mittelbar der Kanzlei zufließen.
 
 ---
 
@@ -228,17 +268,17 @@ Ansprüche offen sind. Audit-Daten werden nie gelöscht.
 
 ---
 
-## L-13 — Höchstsätze netto oder brutto?
+## L-13 — Höchstsätze netto oder brutto? · **geklärt: netto**
 
-**Kontext.** § 2 der Höchstsatzverordnung nennt Prozentsätze, ohne dass hier geklärt ist, ob
-sie sich auf Netto- oder Bruttobeträge beziehen.
+**Ergebnis.** Nach § 4 Abs 1 der Verordnung ist die Umsatzsteuer in den Höchstbeträgen **nicht enthalten**. Die Deckel gelten für den Nettobetrag; die Umsatzsteuer kommt zulässig hinzu.
 
-**Auswirkung.** Bei 20 % Umsatzsteuer entscheidet die Auslegung über rund ein Sechstel des
-zulässigen Betrags.
+**Konfidenz: hoch bis moderat.** Belegt über eine Sekundärquelle, die die Verordnung zitiert, und über den Urtext von 1996. Die heute geltende Fassung des § 4 wurde nicht unmittelbar im RIS abgerufen. Vor Produktivschaltung bitte im Volltext bestätigen.
 
-**Betroffen.** `computeOrderFee()`, Erfolgshonorar-Berechnung, `vatBasisPoints`.
+**Rechenbeispiel.** 15 % auf 6.000 € sind 900 € netto, zuzüglich 20 % Umsatzsteuer 180 €, in Summe 1.080 €.
 
-**Derzeit im Code.** Der Deckel wird auf den Nettobetrag angewandt — die strengere Variante.
+**Korrektur einer früheren Aussage.** Eine frühere Fassung dieser Datei und von `CLAUDE.md` bezeichnete „Deckel auf netto" als die *strengere* Auslegung. Das ist verkehrt herum: netto bis 6 % zuzüglich Umsatzsteuer ergeben 7,2 % der Forderung in Summe, während ein Deckel auf den Bruttobetrag nur 5 % netto zugelassen hätte. Das Verhalten im Code war bereits richtig, die Begründung war falsch.
+
+**Im Code.** `computeOrderFee()` liefert Netto, Steuer und Brutto getrennt. Der Deckel wird auf den Nettobetrag angewandt, der Steuersatz kommt aus der Konfiguration und wird nie angenommen.
 
 ---
 
@@ -247,8 +287,8 @@ zulässigen Betrags.
 **Kontext.** Ob sich die „Summe der Höchstsätze" so auslegen lässt, dass zwischen
 Auftragsgebühr und Erfolgshonorar verschoben werden darf, ist hier nicht geklärt.
 
-**Derzeit im Code.** Jeder Posten wird **einzeln** eingehalten — die strengere Auslegung.
-Eine Verschiebung ist nicht implementiert.
+**Derzeit im Code.** Jeder Posten wird **einzeln** eingehalten — hier ist das
+tatsächlich die engere Auslegung. Eine Verschiebung ist nicht implementiert.
 
 ---
 
@@ -283,3 +323,68 @@ Rechnungsauslösung.
 
 **Blockiert.** Die automatische Rechnungsauslösung bei Schweigen. Die Bestätigung durch
 aktives Handeln des Gläubigers ist davon nicht betroffen.
+
+
+---
+
+## L-17 — Indexanpassung der Eurobeträge
+
+**Kontext.** Die Eurobeträge der Höchstsatzverordnung sind an den Verbraucherpreisindex
+gebunden. Die heute geltenden Beträge liegen daher vermutlich über den im Verordnungstext
+genannten Werten. [Inferenz, moderat] Die **Prozentsätze sind davon nicht betroffen.**
+
+**Offen.**
+1. Welche Indexbasis und welcher Anpassungsmechanismus gelten genau?
+2. Wer prüft die Anpassung, und in welchem Rhythmus?
+3. Gibt es eine amtliche Verlautbarung der jeweils geltenden Beträge?
+
+**Betroffen.** Jeder schuldnerseitige Kostenposten aus § 3 (siehe L-02), sobald er
+umgesetzt wird.
+
+**Technische Vorgabe, unabhängig von der Klärung.** In `caps.ts` steht **kein einziger
+Eurobetrag** — ausschließlich Sätze. Jeder Eurobetrag aus der Verordnung gehört in die
+versionierte Konfiguration mit Gültigkeitszeitraum, damit eine Indexanpassung eine neue
+Version erzeugt und historische Berechnungen unverändert bleiben. Ein Test erzwingt, dass
+jede numerische Konstante in `caps.ts` ein Satz ist.
+
+---
+
+## L-18 — Preismodell: wer trägt die Kosten
+
+**Kontext.** Mehrere österreichische Mitbewerber treten gegenüber dem Gläubiger
+**kosten- und risikofrei** auf und finanzieren sich über die schuldnerseitigen Kosten des
+§ 3:
+
+- Ein Anbieter wirbt ausdrücklich mit Kosten- und Risikofreiheit für den Gläubiger; bei
+  Uneinbringlichkeit fallen keine Kosten an. Nimmt auch Privatpersonen als Auftraggeber.
+- Ein weiterer stundet die Inkassokosten dem Auftraggeber, fordert sie beim Schuldner ein
+  und verzichtet bei Uneinbringlichkeit darauf; Erfolgsprovision nur bei eingeklagten,
+  verjährten oder Auslandsforderungen.
+- Ein etablierter Anbieter verrechnet bei Übergabe eine Auftragsgebühr und nimmt nur
+  Unternehmen als Auftraggeber.
+
+[Recherche der Auftraggeberin, nicht eigenständig verifiziert]
+
+**Folge.** Ein Modell „30 € vorab plus 15 % Erfolgshonorar" ist für den Gläubiger teurer
+als ein Teil des Marktes. [Inferenz, moderat bis hoch]
+
+**Das ist keine Rechtsfrage, sondern eine Geschäftsentscheidung.** Sie wird hier geführt,
+weil sie die Preisregel, die Schuldnertexte, die Betragsaufstellung und die Positionierung
+bestimmt — und weil sie mit dem schuldnerschonenden Ansatz des Briefings in Spannung steht.
+
+**Technische Optionen.**
+
+1. **Gläubiger zahlt (heutiges Modell).** Auftragsgebühr gedeckelt mit 6 %, Erfolgshonorar
+   bis 15 %, schuldnerseitige Kosten bleiben aus. `cost_recovery` bleibt auf `false`.
+   Bereits umgesetzt und getestet.
+2. **Schuldner trägt die Kosten.** Auftragsgebühr entfällt oder wird gestundet;
+   schuldnerseitige Kosten nach § 3 werden geltend gemacht. Erfordert: eigene
+   Betragskomponente mit Rechtsgrundlage-Verweis, Indexpflege (L-17), Angemessenheits-
+   prüfung nach § 1333 Abs 2 ABGB je Fall, und deutlich andere Schuldnertexte.
+   Widerspricht dem schuldnerschonenden Ansatz.
+3. **Mischform.** Auftragsgebühr wird dem Gläubiger gestundet und nur bei Erfolg fällig;
+   keine schuldnerseitigen Kosten. Erfordert eine Ausfallkalkulation und ein
+   Stundungsmodell im Auftragsdatensatz.
+
+**Was bis zur Entscheidung blockiert ist.** B3 (Preisregel) kann gebaut, aber nicht
+produktiv geschaltet werden. Die Schuldnertexte aus G3 hängen unmittelbar daran.

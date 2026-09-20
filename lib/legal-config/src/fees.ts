@@ -6,11 +6,15 @@
 import { type Money, ZERO, compare, fromCents } from '@fp/money';
 import { ConfigError } from './types.js';
 import type { PlatformFeeRule, PlatformFeeTier } from './parameters.js';
-import { cappedOrderFee } from './caps.js';
+import { addVat, cappedOrderFee } from './caps.js';
 
 export interface OrderFeeResult {
-  /** Tatsaechlich zu verrechnende Gebuehr (netto). */
+  /** Tatsaechlich zu verrechnende Gebuehr (netto). Der Deckel gilt hier. */
   readonly feeCents: Money;
+  /** Umsatzsteuer auf die Gebuehr. */
+  readonly vatCents: Money;
+  /** Bruttobetrag, der dem Glaeubiger in Rechnung gestellt wird. */
+  readonly grossCents: Money;
   /** Der konfigurierte Stufenbetrag vor Anwendung des Deckels. */
   readonly tierFeeCents: Money;
   /** Ob der gesetzliche Deckel gegriffen hat. */
@@ -32,9 +36,14 @@ export function computeOrderFee(rule: PlatformFeeRule, principal: Money): OrderF
   const tier = selectTier(rule, principal);
   const tierFeeCents = fromCents(tier.feeCents);
   const feeCents = cappedOrderFee(tierFeeCents, principal);
+  // § 4 Abs 1: Die Umsatzsteuer ist im Hoechstbetrag nicht enthalten und
+  // kommt daher auf den bereits gedeckelten Nettobetrag hinzu.
+  const { vat, gross } = addVat(feeCents, tier.vatBasisPoints, 'HALF_UP');
 
   return {
     feeCents,
+    vatCents: vat,
+    grossCents: gross,
     tierFeeCents,
     cappedByStatute: compare(feeCents, tierFeeCents) < 0,
     vatBasisPoints: tier.vatBasisPoints,

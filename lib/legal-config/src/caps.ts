@@ -13,14 +13,38 @@
  * versionierten Konfiguration: die Konfiguration legt fest, WAS verrechnet
  * wird, diese Datei prueft, ob das zulaessig ist.
  *
+ * Netto oder brutto (L-13): Nach § 4 Abs 1 der Verordnung ist die
+ * Umsatzsteuer in den Hoechstbetraegen NICHT enthalten. Die Deckel gelten
+ * also fuer den Nettobetrag, die Umsatzsteuer kommt zulaessig hinzu.
+ * Konfidenz hoch bis moderat: die geltende Fassung des § 4 wurde nicht
+ * unmittelbar im RIS geprueft, sondern ueber eine Sekundaerquelle und den
+ * Urtext von 1996 belegt.
+ *
+ * Achtung bei der Einordnung: "Deckel auf netto" ist die WEITERE Auslegung,
+ * nicht die engere. Netto bis 6 % zuzueglich 20 % Umsatzsteuer ergibt 7,2 %
+ * der Forderung in Summe; ein Deckel auf den Bruttobetrag haette nur 5 %
+ * netto zugelassen. Eine fruehere Fassung dieser Datei hat das umgekehrt
+ * bezeichnet - das Verhalten war richtig, die Begruendung falsch.
+ *
  * Offen (siehe docs/LEGAL_OPEN_QUESTIONS.md):
- *  - L-13: Sind die Prozentsaetze netto oder brutto zu verstehen?
  *  - L-14: Erlaubt der Gesamtdeckel ("Summe der Hoechstsaetze") eine
  *    Verschiebung zwischen den Posten? Bis zur Klaerung wird jeder Posten
- *    einzeln eingehalten - die strengere Auslegung.
+ *    einzeln eingehalten - hier ist das tatsaechlich die engere Auslegung.
+ *  - L-17: Die EUROBETRAEGE der Verordnung sind an den Verbraucherpreis-
+ *    index gebunden und liegen heute vermutlich ueber den Werten im Text.
+ *    Die PROZENTSAETZE sind davon nicht betroffen. Deshalb stehen in dieser
+ *    Datei ausschliesslich Prozentsaetze; jeder Eurobetrag aus der
+ *    Verordnung gehoert in die versionierte Konfiguration, nie in den Code.
  */
 
-import { type Money, applyBasisPoints, fromCents, min } from '@fp/money';
+import {
+  type Money,
+  type RoundingMode,
+  add,
+  applyBasisPoints,
+  fromCents,
+  min,
+} from '@fp/money';
 
 /**
  * Im Voraus zu zahlende Auftragsgebuehr: hoechstens 6 % der Forderung.
@@ -69,6 +93,22 @@ export function formatBasisPoints(basisPoints: number): string {
     .toString()
     .padStart(2, '0');
   return `${whole},${fraction} %`;
+}
+
+/**
+ * Bruttobetrag aus einem gedeckelten Nettobetrag.
+ *
+ * Die Deckel gelten fuer netto (§ 4 Abs 1), die Umsatzsteuer kommt hinzu.
+ * Der Steuersatz wird uebergeben und nie angenommen - er stammt aus der
+ * versionierten Konfiguration.
+ */
+export function addVat(
+  net: Money,
+  vatBasisPoints: number,
+  mode: RoundingMode,
+): { readonly net: Money; readonly vat: Money; readonly gross: Money } {
+  const vat = applyBasisPoints(net, vatBasisPoints, mode);
+  return { net, vat, gross: add(net, vat) };
 }
 
 export class CapExceededError extends Error {

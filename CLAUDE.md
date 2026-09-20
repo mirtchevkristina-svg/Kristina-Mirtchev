@@ -104,7 +104,10 @@ Grundlage: § 2 der Verordnung ueber die Hoechstsaetze der Inkassoinstituten geb
 * Ein konfigurierter Erfolgshonorarsatz ueber 15 % ist ein Konfigurationsfehler und verhindert den Start. Es wird nie still auf den Hoechstsatz gekappt.
 * Die 40 %-Stufe (wiederholte vergebliche Inkassoversuche, verjaehrte Forderungen, Konkursforderungen) wird nie automatisch angenommen, sondern nur nach dokumentierter rechtlicher Wertung gesetzt.
 * Bemessungsgrundlage der erfolgsabhaengigen Verguetung sind die Betraege, um die sich die Schuld durch Leistungen des Schuldners waehrend der Vertragsdauer mindert. Direktzahlungen an den Glaeubiger sind damit erfasst.
-* Offen und daher in der strengeren Auslegung umgesetzt (jeder Posten einzeln eingehalten): ob die Saetze netto oder brutto zu verstehen sind (L-13) und ob der Gesamtdeckel eine Verschiebung zwischen den Posten erlaubt (L-14).
+* **Die Deckel gelten netto.** Nach § 4 Abs 1 der Verordnung ist die Umsatzsteuer in den Hoechstbetraegen nicht enthalten; sie kommt auf den bereits gedeckelten Nettobetrag hinzu (L-13, Konfidenz hoch bis moderat - die geltende Fassung des § 4 ist nicht unmittelbar im RIS geprueft). Zur Einordnung: das ist die weitere, nicht die engere Auslegung - netto bis 6 % zuzueglich 20 % USt sind 7,2 % der Forderung in Summe.
+* **Eurobetraege aus der Verordnung nie in den Code.** Die Eurobetraege sind an den Verbraucherpreisindex gebunden und liegen heute vermutlich ueber den Werten im Verordnungstext; die Prozentsaetze sind davon nicht betroffen. Im Code stehen daher ausschliesslich Saetze; jeder Eurobetrag gehoert in die versionierte Konfiguration (L-17). Ein Test erzwingt das.
+* Weiterhin offen und in der engeren Auslegung umgesetzt (jeder Posten einzeln eingehalten): ob der Gesamtdeckel eine Verschiebung zwischen den Posten erlaubt (L-14).
+* **Schuldnerseitige Kosten (§ 3)** - allgemeine Bearbeitungskosten, Mahnkosten, Evidenzhaltung - sind ein eigener, gedeckelter Posten. Ob das Portal sie ueberhaupt geltend macht, ist eine Geschaeftsentscheidung (L-02) und im Code nicht vorweggenommen. Zusaetzlich zur Verordnung entscheidet § 1333 Abs 2 ABGB ueber die Ersatzfaehigkeit im Einzelfall.
 
 ### 4.4b Zahlungsbestaetigung und Rechnungsausloesung
 
@@ -158,6 +161,8 @@ Rechnungen entsprechen § 11 UStG und sind fortlaufend nummeriert. Bei Ratenzahl
 ## 6. Was du nicht tust
 
 * Keine Rechtstexte (AGB, Datenschutz, Widerrufsbelehrung) selbst formulieren – nur Platzhalter mit `LEGAL-REVIEW`.
+* Keine Eurobetraege aus indexgebundenen Verordnungen als Konstante in den Code schreiben – nur Saetze. Betraege kommen aus der versionierten Konfiguration.
+* Keine Zahlungs-, Provisions- oder Vorteilsbeziehung zwischen Portalbetreiber und Kooperationskanzlei abbilden – in keine Richtung (siehe L-11).
 * Keine Zinssätze, Pauschalen, Gebührengrenzen oder Verjährungsfristen „aus dem Gedächtnis" als Produktivwerte eintragen.
 * Keine neuen externen Dienste (Analytics, Tracking, weitere KI-Anbieter) ohne Rückfrage – jeder neue Auftragsverarbeiter ist datenschutzrelevant.
 * Keine Secrets im Code, keine echten personenbezogenen Daten in Seeds oder Tests.
