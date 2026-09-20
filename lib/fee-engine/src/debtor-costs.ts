@@ -27,10 +27,12 @@ import {
   compare,
   isNegative,
   min,
+  negate,
   sum,
 } from '@fp/money';
 import type {
   CollectionMeasure,
+  CommercialFlatFeeRule,
   DebtorCostSchedule,
   MeasureCap,
   ProcessingCostTier,
@@ -57,7 +59,7 @@ export interface PerformedMeasure {
 }
 
 export interface DebtorCostLine {
-  readonly kind: 'processing' | 'measure';
+  readonly kind: 'processing' | 'measure' | 'commercial_flat_fee' | 'flat_fee_credit';
   readonly measure: CollectionMeasure | null;
   /** Gesetzlicher Hoechstbetrag fuer diesen Posten. */
   readonly statutoryCap: Money;
@@ -87,6 +89,8 @@ export interface DebtorCostInput {
    * Fall bejaht wurde.
    */
   readonly processingAppropriatenessConfirmed: boolean;
+  /** Ob der Schuldner Unternehmer ist. Entscheidet ueber § 458 UGB. */
+  readonly debtorIsBusiness: boolean;
 }
 
 /**
@@ -98,6 +102,7 @@ export interface DebtorCostInput {
 export function computeDebtorCosts(
   schedule: DebtorCostSchedule,
   input: DebtorCostInput,
+  flatFee?: CommercialFlatFeeRule,
 ): DebtorCostResult {
   if (compare(input.principal, ZERO) <= 0) {
     throw new DebtorCostError('Die Hauptforderung muss groesser als null sein');
@@ -180,12 +185,16 @@ export function computeDebtorCosts(
     });
   }
 
+  appendCommercialFlatFee(lines, input, flatFee);
+
   const total = sum(lines.map((l) => l.applied));
   const statutoryMaximum = sum(lines.map((l) => l.statutoryCap));
 
   // Sicherheitsnetz: kein Posten und keine Summe darf den Hoechstsatz
   // ueberschreiten. Ein Verstoss ist ein Programmfehler, kein Sonderfall.
+  // Die Anrechnungszeile ist naturgemaess negativ und davon ausgenommen.
   for (const line of lines) {
+    if (line.kind === 'flat_fee_credit') continue;
     if (compare(line.applied, line.statutoryCap) > 0) {
       throw new DebtorCostError(
         `Angesetzter Betrag ueberschreitet den Hoechstsatz (${line.kind}/${line.measure ?? '-'})`,
@@ -194,6 +203,64 @@ export function computeDebtorCosts(
   }
 
   return { lines, total, statutoryMaximum, warnings };
+}
+
+/**
+ * Pauschalentschaedigung nach § 458 UGB und ihre Anrechnung.
+ *
+ * Die Pauschale kommt nicht zusaetzlich zu den uebrigen Betreibungskosten,
+ * sondern wird auf sie angerechnet. Wirtschaftlich ergibt sich damit der
+ * groessere der beiden Betraege. Die Anrechnung wird als eigene Zeile
+ * ausgewiesen, damit die Rechnung gegenueber dem Schuldner nachvollziehbar
+ * bleibt, statt still gekuerzt zu werden.
+ *
+ * LEGAL-REVIEW L-21: Die Anrechnung beruht auf einem Verstaendnis mittlerer
+ * Konfidenz und ist fachlich zu bestaetigen.
+ */
+function appendCommercialFlatFee(
+  lines: DebtorCostLine[],
+  input: DebtorCostInput,
+  rule: CommercialFlatFeeRule | undefined,
+): void {
+  if (!rule?.enabled) return;
+  if (rule.businessDebtorsOnly && !input.debtorIsBusiness) {
+    lines.push({
+      kind: 'commercial_flat_fee',
+      measure: null,
+      statutoryCap: ZERO,
+      applied: ZERO,
+      note: 'Nicht angesetzt: die Pauschale gilt nur im unternehmerischen Verkehr.',
+      chargeable: false,
+    });
+    return;
+  }
+
+  const amount = resolveIndexedAmount(rule.amount);
+  lines.push({
+    kind: 'commercial_flat_fee',
+    measure: null,
+    statutoryCap: amount,
+    applied: amount,
+    note: 'Pauschalentschaedigung im unternehmerischen Verkehr (§ 458 UGB).',
+    chargeable: compare(amount, ZERO) > 0,
+  });
+
+  if (!rule.creditedAgainstOtherCosts) return;
+
+  const otherCosts = sum(
+    lines.filter((l) => l.kind === 'processing' || l.kind === 'measure').map((l) => l.applied),
+  );
+  const credited = min(amount, otherCosts);
+  if (compare(credited, ZERO) <= 0) return;
+
+  lines.push({
+    kind: 'flat_fee_credit',
+    measure: null,
+    statutoryCap: ZERO,
+    applied: negate(credited),
+    note: 'Die Pauschale wird auf die uebrigen Betreibungskosten angerechnet.',
+    chargeable: true,
+  });
 }
 
 function measureBlockReason(

@@ -3,6 +3,7 @@ import { ZERO, formatEuro, parseEuro } from '@fp/money';
 import { type LitigationCostRule, demoRegistry, resolve } from '@fp/legal-config';
 import {
   ESTIMATE_DISCLAIMER,
+  FREE_CHOICE_NOTICE,
   HANDOVER_CONFIRMATION,
   HANDOVER_REQUIREMENTS,
   type HandoverChecklist,
@@ -96,6 +97,7 @@ describe('Kanzleiuebergabe', () => {
     data_transfer_consented: false,
     no_open_objection: false,
     human_approval_recorded: false,
+    free_choice_notice_shown: false,
   };
   const all: HandoverChecklist = {
     collection_concluded: true,
@@ -104,6 +106,7 @@ describe('Kanzleiuebergabe', () => {
     data_transfer_consented: true,
     no_open_objection: true,
     human_approval_recorded: true,
+    free_choice_notice_shown: true,
   };
 
   it('ist ohne jede Voraussetzung nicht bereit', () => {
@@ -180,5 +183,28 @@ describe('Kanzleiuebergabe', () => {
     for (const term of ['commission', 'provision', 'kickback', 'referralFee', 'revenueShare']) {
       expect(source.toLowerCase()).not.toContain(`readonly ${term.toLowerCase()}`);
     }
+  });
+});
+
+describe('Freie Kanzleiwahl', () => {
+  it('ist Voraussetzung der Uebergabe', () => {
+    const complete: HandoverChecklist = {
+      collection_concluded: true,
+      cost_estimate_shown: true,
+      mandate_signed_with_firm: true,
+      data_transfer_consented: true,
+      no_open_objection: true,
+      human_approval_recorded: true,
+      free_choice_notice_shown: false,
+    };
+    const readiness = checkHandoverReadiness(complete);
+    expect(readiness.ready).toBe(false);
+    expect(readiness.summary).toContain('freie Kanzleiwahl');
+  });
+
+  it('nennt die freie Wahl und den Ausschluss von Vorteilen', () => {
+    expect(FREE_CHOICE_NOTICE).toContain('Ihrer Wahl');
+    expect(FREE_CHOICE_NOTICE).toContain('keine Voraussetzung');
+    expect(FREE_CHOICE_NOTICE).toContain('keine Zahlungen oder sonstigen Vorteile');
   });
 });

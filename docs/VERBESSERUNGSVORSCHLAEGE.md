@@ -244,10 +244,42 @@ UID-Nummer, was eine brauchbare Grundlage wäre.
 
 ---
 
+## 6d. Hybridmodell: die vier Korrekturen vom 20.09.2026
+
+*Einarbeitung der Rückmeldung zur ersten Fassung des Hybridmodells.*
+
+**1. Wem die Schuldnerkosten zustehen — trug nicht.** Die Rechnung „Erfolgshonorar plus
+Schuldnerkosten gleich Erlös" übersprang einen Schritt: Der Schuldner schuldet Inkassokosten
+dem **Gläubiger** als Schadenersatz, nicht dem Portal. Ohne Forderung des Portals gegen den
+Gläubiger fehlt der Schaden. Umgesetzt ist deshalb die Stundungs- und Verzichtskonstruktion
+(siehe L-20), die auch mindestens ein Mitbewerber erkennbar verwendet. Ob sie gegenüber
+Verbrauchern hält, ist der wichtigste offene Rechercheauftrag.
+
+**2. Die Schuldnerkosten landen beim Gläubiger.** Im Direktzahlungsmodell fließt alles auf
+dessen Konto. Die Rechnung an den Gläubiger hat deshalb **zwei** Posten: Erfolgshonorar und
+eingebrachte gestundete Inkassokosten. Damit verdoppelt sich das Umgehungsrisiko — die
+Zahlungsmeldung durch den Schuldner ist nicht länger ein Komfortmerkmal, sondern die
+Kontrolle, auf der das Modell beruht.
+
+**3. Anrechnung bestimmt die Bemessungsgrundlage.** Nach § 1416 ABGB werden Zahlungen im
+Zweifel zuerst auf Kosten und Zinsen angerechnet. Eine Teilzahlung, die vollständig darauf
+entfällt, löst kein Erfolgshonorar aus. Diese Abhängigkeit ist jetzt ausdrücklich im Code
+abgebildet statt in der Aufrufstelle versteckt. Die Reihenfolge selbst bleibt L-07 und
+gehört in den Vertrag.
+
+**4. Pauschale nach § 458 UGB.** Nur gegenüber Unternehmern, und **angerechnet** statt
+zusätzlich. Voreingestellt abgeschaltet; die Anrechnung erscheint als eigene Zeile (L-21).
+
+**Ergänzend zur Kanzleiübergabe:** Vor jeder Übergabe wird auf die freie Kanzleiwahl
+hingewiesen. Eine Übergabe, die als einziger Weg erscheint, wäre faktisch eine
+Mandatszuführung.
+
+---
+
 ## 7. Top 10 – Reihenfolge nach Hebelwirkung
 
 1. Gewerbefrage § 118 GewO klären (Existenzfrage)
-2. Preismodell entscheiden (L-18) — bestimmt Preisregel, Schuldnertexte und Positionierung
+2. OGH-Judikatur zur Stundungs-/Verzichtskonstruktion klären (L-20) — trägt sonst das halbe Erlösmodell nicht
 3. Verjährungswarnung + Anerkenntnis-Dokumentation
 4. Insolvenzcheck vor Kontakt
 5. Statusmodell entflechten + Back-Office-RBAC

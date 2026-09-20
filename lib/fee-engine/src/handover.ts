@@ -34,7 +34,9 @@ export type HandoverRequirement =
   /** Es liegt keine offene Einwendung vor. */
   | 'no_open_objection'
   /** Eine dokumentierte Freigabe mit Benutzer, Zeitpunkt und Begruendung. */
-  | 'human_approval_recorded';
+  | 'human_approval_recorded'
+  /** Der Hinweis auf die freie Kanzleiwahl wurde angezeigt. */
+  | 'free_choice_notice_shown';
 
 export const HANDOVER_REQUIREMENTS: readonly HandoverRequirement[] = [
   'collection_concluded',
@@ -43,6 +45,7 @@ export const HANDOVER_REQUIREMENTS: readonly HandoverRequirement[] = [
   'data_transfer_consented',
   'no_open_objection',
   'human_approval_recorded',
+  'free_choice_notice_shown',
 ];
 
 export const REQUIREMENT_LABELS: Record<HandoverRequirement, string> = {
@@ -52,6 +55,7 @@ export const REQUIREMENT_LABELS: Record<HandoverRequirement, string> = {
   data_transfer_consented: 'Zustimmung zur Uebermittlung der Unterlagen',
   no_open_objection: 'Keine offene Einwendung',
   human_approval_recorded: 'Freigabe dokumentiert',
+  free_choice_notice_shown: 'Hinweis auf die freie Kanzleiwahl angezeigt',
 };
 
 export type HandoverChecklist = Readonly<Record<HandoverRequirement, boolean>>;
@@ -117,6 +121,21 @@ export function describeTransferScope(pkg: HandoverPackage): string {
  * Bewusst so formuliert, dass kein bestehendes Mandat des Portals und keine
  * anwaltliche Taetigkeit des Portals suggeriert wird (Invariante 12).
  */
+/**
+ * Hinweis, der vor der Uebergabe anzuzeigen ist.
+ *
+ * Der Glaeubiger muss wissen, dass er nicht an die Kooperationskanzlei
+ * gebunden ist. Das folgt aus dem Verbot, Vorteile fuer Mandatszufuehrungen
+ * zu gewaehren (LEGAL-REVIEW L-11): Eine Uebergabe, die als einziger Weg
+ * dargestellt wird, waere faktisch eine Zufuehrung.
+ */
+export const FREE_CHOICE_NOTICE =
+  'Sie koennen Ihre Forderung jeder Rechtsanwaeltin und jedem Rechtsanwalt ' +
+  'Ihrer Wahl uebergeben. Die hier angebotene Uebergabe an die ' +
+  'Kooperationskanzlei ist ein Angebot zur Vereinfachung und keine ' +
+  'Voraussetzung. Zwischen dem Portal und der Kanzlei bestehen keine ' +
+  'Zahlungen oder sonstigen Vorteile fuer die Uebergabe von Faellen.';
+
 export const HANDOVER_CONFIRMATION =
   'Ihre Unterlagen wurden an die Kanzlei uebermittelt. Die Kanzlei prueft ' +
   'Ihren Fall eigenstaendig und setzt sich mit Ihnen in Verbindung, um die ' +

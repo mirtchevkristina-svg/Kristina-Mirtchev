@@ -132,6 +132,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
         { measure: 'first_reminder', performedAt: NOW, appropriatenessConfirmed: false },
       ],
       processingAppropriatenessConfirmed: false,
+      debtorIsBusiness: false,
     });
     expect(formatEuro(result.total)).toBe('€ 0,00');
     expect(result.lines.every((l) => !l.chargeable)).toBe(true);
@@ -143,6 +144,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
       principal: parseEuro('5.000,00'),
       performedMeasures: [],
       processingAppropriatenessConfirmed: true,
+      debtorIsBusiness: false,
     });
     const processing = result.lines[0]!;
     // 8 % von 5.000 = 400 Hoechstsatz; angesetzt werden 60 % davon.
@@ -157,6 +159,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
           principal: parseEuro(euro),
           performedMeasures: [],
           processingAppropriatenessConfirmed: true,
+          debtorIsBusiness: false,
         }).lines[0]!.statutoryCap,
       );
     expect(cap('50,00')).toBe('€ 20,35');
@@ -171,6 +174,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
       principal: parseEuro('10,00'),
       performedMeasures: [],
       processingAppropriatenessConfirmed: true,
+      debtorIsBusiness: false,
     });
     expect(formatEuro(result.lines[0]!.statutoryCap)).toBe('€ 10,00');
   });
@@ -180,6 +184,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
       principal: parseEuro('700,00'),
       performedMeasures: [confirmed('first_reminder')],
       processingAppropriatenessConfirmed: false,
+      debtorIsBusiness: false,
     });
     expect(below.lines[1]?.chargeable).toBe(false);
     expect(below.lines[1]?.note).toContain('Mindesthoehe');
@@ -188,6 +193,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
       principal: parseEuro('1.000,00'),
       performedMeasures: [confirmed('first_reminder')],
       processingAppropriatenessConfirmed: false,
+      debtorIsBusiness: false,
     });
     // Hoechstsatz 50,87; angesetzt 50 % davon.
     expect(formatEuro(above.lines[1]!.statutoryCap)).toBe('€ 50,87');
@@ -199,6 +205,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
       principal: parseEuro('5.000,00'),
       performedMeasures: [confirmed('first_reminder'), confirmed('first_reminder')],
       processingAppropriatenessConfirmed: false,
+      debtorIsBusiness: false,
     });
     expect(result.lines[2]?.chargeable).toBe(false);
     expect(result.lines[2]?.note).toContain('bereits verrechnet');
@@ -209,6 +216,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
       principal: parseEuro('5.000,00'),
       performedMeasures: [confirmed('installment_agreement')],
       processingAppropriatenessConfirmed: false,
+      debtorIsBusiness: false,
     });
     expect(formatEuro(result.lines[1]!.applied)).toBe('€ 0,00');
     expect(result.lines[1]?.note).toContain('bewusst nicht angelastet');
@@ -219,6 +227,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
       principal: parseEuro('5.000,00'),
       performedMeasures: [confirmed('asset_investigation')],
       processingAppropriatenessConfirmed: false,
+      debtorIsBusiness: false,
     });
     expect(result.lines[1]?.chargeable).toBe(false);
     expect(formatEuro(result.lines[1]!.applied)).toBe('€ 0,00');
@@ -229,6 +238,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
       principal: parseEuro('5.000,00'),
       performedMeasures: [confirmed('first_reminder'), confirmed('second_reminder')],
       processingAppropriatenessConfirmed: true,
+      debtorIsBusiness: false,
     });
     for (const line of result.lines) {
       expect(line.applied <= line.statutoryCap).toBe(true);
@@ -241,6 +251,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
       principal: parseEuro('50,00'),
       performedMeasures: [],
       processingAppropriatenessConfirmed: true,
+      debtorIsBusiness: false,
     });
     expect(result.warnings.join(' ')).toContain('L-17');
   });
@@ -250,6 +261,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
       principal: parseEuro('5.000,00'),
       performedMeasures: [confirmed('first_reminder')],
       processingAppropriatenessConfirmed: true,
+      debtorIsBusiness: false,
     });
     const total = debtorTotal(parseEuro('5.000,00'), parseEuro('120,00'), costs);
     expect(formatEuro(total)).toBe(formatEuro(add(parseEuro('5.120,00'), costs.total)));
@@ -261,6 +273,7 @@ describe('Schuldnerkosten: Hoechstsatz ist kein Anspruch', () => {
         principal: ZERO,
         performedMeasures: [],
         processingAppropriatenessConfirmed: true,
+        debtorIsBusiness: false,
       }),
     ).toThrow(DebtorCostError);
   });
@@ -274,11 +287,13 @@ describe('Trennung der beiden Erloesarten', () => {
       principal,
       performedMeasures: [confirmed('first_reminder'), confirmed('second_reminder')],
       processingAppropriatenessConfirmed: true,
+      debtorIsBusiness: false,
     });
     const withoutCosts = computeDebtorCosts(schedule, {
       principal,
       performedMeasures: [],
       processingAppropriatenessConfirmed: false,
+      debtorIsBusiness: false,
     });
 
     expect(formatEuro(fee.net)).toBe('€ 350,00');

@@ -346,6 +346,38 @@ export const demoRegistry: Registry = {
     'zu belegen: GGG (Gerichtsgebuehren) und RATG (Anwaltskosten)',
   ),
 
+  cost_liability: demo(
+    'cost_liability',
+    'Stundungs- und Verzichtskonstruktion fuer die Inkassokosten',
+    'demo-cost-liability-v1',
+    'L-20',
+    {
+      creditorOwesAtOrder: true,
+      deferredUntilRecovered: true,
+      waivedIfUncollectible: true,
+      uncollectibleAfterDays: 180,
+    },
+    'zu pruefen: § 1333 Abs 2 ABGB, OGH-Judikatur zum Verzicht gegenueber dem Auftraggeber',
+  ),
+
+  commercial_flat_fee: demo(
+    'commercial_flat_fee',
+    'Pauschalentschaedigung im unternehmerischen Verkehr (§ 458 UGB)',
+    'demo-commercial-flat-fee-v1',
+    'L-21',
+    {
+      enabled: false,
+      amount: {
+        baseAmountCents: '4000',
+        indexFactorBasisPoints: 10_000,
+        indexReference: 'ungeprueft',
+      },
+      creditedAgainstOtherCosts: true,
+      businessDebtorsOnly: true,
+    },
+    'zu pruefen: § 458 UGB, Anrechnung auf weitere Betreibungskosten',
+  ),
+
   cost_recovery: demo(
     'cost_recovery',
     'Ob Portalkosten dem Schuldner als Betreibungskosten angelastet werden',

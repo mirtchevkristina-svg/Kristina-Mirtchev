@@ -22,6 +22,7 @@ import {
   compare,
   fromCents,
   isNegative,
+  sum,
 } from '@fp/money';
 import {
   type SuccessFeeRule,
@@ -135,4 +136,34 @@ export function computeSuccessFee(
  */
 export function previewSuccessFee(rule: SuccessFeeRule, principal: Money): SuccessFeeResult {
   return computeSuccessFee(rule, { principal, recovered: principal });
+}
+
+/**
+ * Bemessungsgrundlage einer Zahlung, abgeleitet aus ihrer Anrechnung.
+ *
+ * Zahlt der Schuldner eine Teilzahlung, deckt diese nicht zwangslaeufig die
+ * Hauptforderung: nach § 1416 ABGB werden Zahlungen im Zweifel zuerst auf
+ * Kosten und Zinsen angerechnet. Bei `basis: 'principal_only'` haengt das
+ * Honorar damit unmittelbar von der Anrechnungsreihenfolge ab - eine
+ * Zahlung von 1.000 EUR, die vollstaendig auf Kosten und Zinsen entfaellt,
+ * loest kein Honorar aus.
+ *
+ * Diese Funktion macht diese Abhaengigkeit ausdruecklich, statt sie in der
+ * Aufrufstelle zu verstecken.
+ *
+ * LEGAL-REVIEW L-07: Die Anrechnungsreihenfolge selbst wird hier nicht
+ * festgelegt; sie kommt aus der versionierten Konfiguration und ist
+ * vertraglich zu regeln.
+ */
+export function successFeeBaseFromAllocation(
+  rule: SuccessFeeRule,
+  allocations: readonly { readonly targetId: string; readonly amount: Money }[],
+  principalComponentId = 'principal',
+): Money {
+  if (rule.basis === 'all_components') {
+    return sum(allocations.map((a) => a.amount));
+  }
+  return sum(
+    allocations.filter((a) => a.targetId === principalComponentId).map((a) => a.amount),
+  );
 }

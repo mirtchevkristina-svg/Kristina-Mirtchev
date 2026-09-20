@@ -121,6 +121,35 @@ Eine Zahlungsmeldung des Schuldners loest nie allein eine Rechnung aus. Sie bele
 
 Rechnungen entsprechen § 11 UStG und sind fortlaufend nummeriert. Bei Ratenzahlungen wird monatlich gesammelt abgerechnet, nicht je Rate.
 
+### 4.4c Hybridmodell: Erfolgshonorar und Schuldnerkosten
+
+Keine Grundgebuehr. Zwei Erloesarten, die technisch und rechtlich getrennt bleiben.
+
+**Erfolgshonorar.** Staffel nach Hauptforderung (10 % bis 5 %), angewandt auf den TATSAECHLICH EINGEBRACHTEN Betrag. Die Stufe waehlt die Forderung, der Satz rechnet auf das Eingebrachte. Alle Saetze liegen unter dem Hoechstsatz von 15 %.
+
+**Schuldnerkosten: wem sie zustehen.** Der Schuldner schuldet Inkassokosten nicht dem Portal, sondern dem Glaeubiger - als Schadenersatz (§ 1333 Abs 2 ABGB). Ein Schaden setzt voraus, dass dem Glaeubiger Kosten tatsaechlich entstanden sind. Bei reinem Erfolgshonorar ohne Grundgebuehr schuldet der Glaeubiger dem Portal aber nichts; dann fehlt die Grundlage, beim Schuldner etwas geltend zu machen.
+
+Deshalb gilt durchgehend diese Konstruktion:
+
+1. Die Inkassokosten entstehen dem Glaeubiger in voller Hoehe bei Auftragserteilung.
+2. Sie werden gestundet.
+3. Sie werden beim Schuldner als Schadenersatz eingefordert.
+4. Bei Uneinbringlichkeit wird darauf verzichtet.
+
+"Keine Grundgebuehr" bleibt wirtschaftlich wahr, ist rechtlich aber anders aufgebaut. Ohne begruendete Kostenforderung gegen den Glaeubiger darf beim Schuldner nichts angesetzt werden; der Code verweigert das ausdruecklich. LEGAL-REVIEW L-20.
+
+**Zwei Rechnungsposten.** Im Direktzahlungsmodell zahlt der Schuldner alles an den Glaeubiger, also auch die Inkassokosten. Die Rechnung an den Glaeubiger enthaelt daher immer zwei Posten: das Erfolgshonorar und die eingebrachten, bisher gestundeten Inkassokosten. Daraus folgt, dass sich das Umgehungsrisiko verdoppelt - Zahlungsmeldung durch den Schuldner und Bestaetigung durch den Glaeubiger sind die Kontrolle, auf der das Modell beruht, keine Bequemlichkeit.
+
+**Der Hoechstsatz ist kein Anspruch.** § 3 nennt Obergrenzen. Es wird nie automatisch der Hoechstsatz angesetzt, sondern ein konfigurierter Anteil; Hoechstsatz und angesetzter Betrag werden getrennt ausgewiesen. Ohne bestaetigte Angemessenheit nach § 1333 Abs 2 ABGB wird nichts angesetzt. Nur tatsaechlich durchgefuehrte Massnahmen erzeugen einen Posten, jede hoechstens einmal.
+
+**Anrechnung bestimmt die Bemessungsgrundlage.** Nach § 1416 ABGB werden Zahlungen im Zweifel zuerst auf Kosten und Zinsen angerechnet. Bei `basis: 'principal_only'` haengt das Erfolgshonorar damit unmittelbar von der Anrechnungsreihenfolge ab: eine Teilzahlung, die vollstaendig auf Kosten und Zinsen entfaellt, loest kein Honorar aus. Die Reihenfolge steht in der Konfiguration und gehoert in den Vertrag (LEGAL-REVIEW L-07).
+
+**Pauschale nach § 458 UGB.** Nur gegenueber unternehmerischen Schuldnern. Sie wird auf weitere Betreibungskosten angerechnet und kommt nicht zusaetzlich hinzu; die Anrechnung erscheint als eigene Zeile, statt still zu kuerzen (LEGAL-REVIEW L-21).
+
+**Eskalation.** Vier Stufen. Die erste erlaubt keine kostenpflichtige Massnahme. Massnahmen werden kumulativ freigegeben; eine pausierte Bearbeitung schreitet nie fort.
+
+**Kanzleiuebergabe.** Vor der Uebergabe ist auf die freie Kanzleiwahl hinzuweisen. Eine Uebergabe, die als einziger Weg dargestellt wird, waere faktisch eine Mandatszufuehrung und damit standesrechtlich problematisch (L-11). Der Prozesskostenrechner liefert eine unverbindliche Schaetzung; die verbindliche Honorarvereinbarung kommt ausschliesslich zwischen Glaeubiger und Kanzlei zustande.
+
 ### 4.5 Stripe
 
 * Webhook-Route vor `express.json()` mit Raw-Body registrieren, Signatur prüfen.

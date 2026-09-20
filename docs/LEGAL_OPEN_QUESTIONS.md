@@ -28,6 +28,8 @@ Code deshalb bewusst keine Entscheidung trifft. Die IDs werden im Quelltext als
 | L-17 | Indexanpassung der Eurobeträge | offen | jeder Eurobetrag aus der Verordnung |
 | L-18 | Preismodell: wer trägt die Kosten | **entschieden** (Hybrid) | — |
 | L-19 | Gebührentabellen GGG und RATG | offen | Prozesskostenrechner |
+| L-20 | Stundung und Verzicht: Ersatzfähigkeit | offen | **gesamtes Schuldnerkosten-Modell** |
+| L-21 | Anrechnung der Pauschale nach § 458 UGB | offen | B2B-Kostenberechnung |
 
 ---
 
@@ -443,3 +445,58 @@ durchgehend unter dem Höchstsatz von 15 %.
 2. **L-17** — ohne geprüften Indexstand sind die Beträge nach § 3 nicht belastbar.
 3. Die konkreten Anteile, mit denen das Portal unter den Höchstsätzen bleibt, sind eine
    Geschäftsentscheidung und stehen als Demo-Werte in der Konfiguration.
+
+
+---
+
+## L-20 — Trägt die Stundungs- und Verzichtskonstruktion?
+
+**Der wichtigste offene Punkt des Hybridmodells.**
+
+**Kontext.** Der Schuldner schuldet Inkassokosten nicht dem Portal, sondern dem Gläubiger —
+als Schadenersatz (§ 1333 Abs 2 ABGB). [Gesetz/TD, hoch] Ein Schaden setzt voraus, dass dem
+Gläubiger Kosten tatsächlich entstanden sind. [Inferenz, M-H]
+
+Bei „keine Grundgebühr, nur Erfolgshonorar" schuldet der Gläubiger dem Portal aber nichts.
+Dann fehlt die Grundlage, Inkassokosten beim Schuldner geltend zu machen. **Die Rechnung
+„350 € Erfolgshonorar plus 300 € Schuldnerkosten" überspringt diesen Schritt.**
+
+**Die Konstruktion.** Die Inkassokosten entstehen dem Gläubiger in voller Höhe bei
+Auftragserteilung, werden gestundet, beim Schuldner als Schadenersatz eingefordert und bei
+Uneinbringlichkeit erlassen. Mindestens ein Mitbewerber arbeitet erkennbar so.
+
+**Offen — und das ist der wichtigste Rechercheauftrag.**
+1. Hält diese Konstruktion vor Gericht, insbesondere **gegenüber Verbrauchern als
+   Schuldnern**? Zu recherchieren ist die OGH-Judikatur zur Ersatzfähigkeit von
+   Inkassokosten, wenn gegenüber dem Auftraggeber auf sie verzichtet wird.
+2. Ab wann gilt eine Forderung als uneinbringlich, und wer stellt das fest?
+3. Wie ist der Verzicht gegenüber dem Gläubiger zu formulieren, damit er die
+   Ersatzfähigkeit nicht rückwirkend entfallen lässt?
+
+**Im Code umgesetzt.** Die Kostenforderung ist ein eigener Gegenstand mit den Zuständen
+gestundet, teilweise gedeckt, gedeckt und erlassen. Ohne begründete Forderung gegen den
+Gläubiger verweigert der Code die Berechnung ausdrücklich, statt stillschweigend zu
+funktionieren. Ein überschießender eingebrachter Betrag wird nie einbehalten. Der Verzicht
+verlangt eine Begründung und wird nie automatisch ausgelöst — die Frist meldet nur, dass
+er in Betracht kommt.
+
+**Blockiert.** Das gesamte schuldnerseitige Erlösmodell. Das Erfolgshonorar ist davon
+nicht betroffen.
+
+---
+
+## L-21 — Anrechnung der Pauschale nach § 458 UGB
+
+**Kontext.** Im unternehmerischen Verkehr besteht eine Pauschalentschädigung von 40 € für
+Betreibungskosten. [Gesetz/TD, hoch] Nach hiesigem Verständnis wird sie **auf** weitere
+Betreibungskosten angerechnet und kommt nicht **zusätzlich** zu ihnen hinzu.
+[Gesetz/TD, moderat]
+
+**Offen.** Ob die Anrechnung tatsächlich so erfolgt, und ob sie auch gegenüber den
+Höchstsätzen des § 3 wirkt oder nur gegenüber sonstigen Betreibungskosten.
+
+**Im Code umgesetzt.** Die Pauschale ist voreingestellt **abgeschaltet**. Ist sie aktiv,
+gilt sie nur gegenüber unternehmerischen Schuldnern, und die Anrechnung erscheint als
+eigene, negative Zeile — die Kostenaufstellung gegenüber dem Schuldner bleibt damit
+nachvollziehbar, statt still gekürzt zu werden. Wirtschaftlich ergibt sich der größere
+der beiden Beträge.

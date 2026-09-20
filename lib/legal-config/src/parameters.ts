@@ -149,6 +149,55 @@ export interface DebtorCostSchedule {
   readonly allowWithoutAppropriatenessCheck: boolean;
 }
 
+/**
+ * Wem die Inkassokosten zustehen und wie sie entstehen.
+ *
+ * Der Schuldner schuldet Inkassokosten nicht dem Portal, sondern dem
+ * Glaeubiger - und zwar als Schadenersatz (§ 1333 Abs 2 ABGB). Ein Schaden
+ * setzt voraus, dass dem Glaeubiger Kosten tatsaechlich entstanden sind.
+ *
+ * Bei einem reinen Erfolgshonorar ohne Grundgebuehr schuldet der Glaeubiger
+ * dem Portal aber keine Inkassokosten. Damit fehlt die Grundlage, sie beim
+ * Schuldner geltend zu machen.
+ *
+ * Die Konstruktion loest das so: Die Inkassokosten entstehen dem Glaeubiger
+ * in voller Hoehe bei Auftragserteilung, werden gestundet, beim Schuldner
+ * als Schadenersatz eingefordert und bei Uneinbringlichkeit erlassen.
+ * "Keine Grundgebuehr" bleibt damit wirtschaftlich wahr, ist rechtlich aber
+ * anders aufgebaut.
+ *
+ * LEGAL-REVIEW L-20: Ob diese Konstruktion traegt, insbesondere gegenueber
+ * Verbrauchern als Schuldnern, ist nicht geklaert. Zu recherchieren ist die
+ * OGH-Judikatur zur Ersatzfaehigkeit von Inkassokosten bei Verzicht
+ * gegenueber dem Auftraggeber.
+ */
+export interface CostLiabilityRule {
+  /** Ob der Glaeubiger die Inkassokosten bei Auftragserteilung schuldet. */
+  readonly creditorOwesAtOrder: boolean;
+  /** Ob die Forderung bis zur Einbringung gestundet wird. */
+  readonly deferredUntilRecovered: boolean;
+  /** Ob bei Uneinbringlichkeit darauf verzichtet wird. */
+  readonly waivedIfUncollectible: boolean;
+  /** Nach wie vielen Tagen ohne Einbringung als uneinbringlich gilt. */
+  readonly uncollectibleAfterDays: number;
+}
+
+/**
+ * Pauschalentschaedigung im unternehmerischen Verkehr (§ 458 UGB).
+ *
+ * Nach hiesigem Verstaendnis wird sie auf weitere Betreibungskosten
+ * angerechnet und kommt nicht zusaetzlich zu ihnen hinzu
+ * (LEGAL-REVIEW L-21, moderate Konfidenz).
+ */
+export interface CommercialFlatFeeRule {
+  readonly enabled: boolean;
+  readonly amount: IndexedAmount;
+  /** Ob sie auf weitere Betreibungskosten angerechnet wird. */
+  readonly creditedAgainstOtherCosts: boolean;
+  /** Nur gegenueber unternehmerischen Schuldnern. */
+  readonly businessDebtorsOnly: boolean;
+}
+
 /** Stufen der aussergerichtlichen Eskalation. */
 export type EscalationStage =
   | 'friendly_reminder'
@@ -292,6 +341,8 @@ export interface ParameterMap {
   readonly debtor_cost_schedule: DebtorCostSchedule;
   readonly escalation_policy: EscalationPolicy;
   readonly litigation_cost_estimate: LitigationCostRule;
+  readonly cost_liability: CostLiabilityRule;
+  readonly commercial_flat_fee: CommercialFlatFeeRule;
   readonly success_fee: SuccessFeeRule;
   readonly default_interest: DefaultInterestRule;
   readonly base_rate_table: BaseRateTable;
