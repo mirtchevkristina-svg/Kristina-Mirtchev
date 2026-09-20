@@ -170,6 +170,41 @@ export interface EscalationPolicy {
   readonly stages: readonly EscalationStageRule[];
 }
 
+/**
+ * Tabellen fuer die unverbindliche Prozesskostenschaetzung.
+ *
+ * Zwei getrennte Regime, die nicht vermischt werden duerfen:
+ *  - Gerichtsgebuehren nach dem GGG
+ *  - Rechtsanwaltskosten nach dem RATG
+ *
+ * Beide Tabellen sind Eurobetraege und aendern sich. Sie stehen deshalb
+ * ausschliesslich hier und niemals im Code.
+ *
+ * LEGAL-REVIEW L-19: Die Tabellenwerte sind fachlich zu belegen und
+ * freizugeben. Bis dahin sind sie DEMO_ONLY und der Startup-Check
+ * verhindert den Produktivbetrieb.
+ */
+export interface LitigationCostTier {
+  /** Obergrenze des Streitwerts in Cent. `null` = offen. */
+  readonly uptoValueCents: string | null;
+  /** Betrag fuer diese Stufe. */
+  readonly amount: IndexedAmount;
+}
+
+export interface LitigationCostRule {
+  /** Gerichtsgebuehr nach GGG, gestaffelt nach Streitwert. */
+  readonly courtFeeTiers: readonly LitigationCostTier[];
+  /** Anhaltswert fuer die eigenen Anwaltskosten nach RATG. */
+  readonly ownLegalCostTiers: readonly LitigationCostTier[];
+  /**
+   * Anteil der eigenen Kosten, mit dem das Kostenrisiko der Gegenseite
+   * angesetzt wird, in Basispunkten. Nur eine Groessenordnung.
+   */
+  readonly opposingRiskShareBasisPoints: number;
+  /** Umsatzsteuer auf die Anwaltskosten, in Basispunkten. */
+  readonly vatBasisPoints: number;
+}
+
 /** Verzugszinsen. */
 export interface DefaultInterestRule {
   /** Satz fuer Verbrauchergeschaefte in Basispunkten. */
@@ -256,6 +291,7 @@ export interface ParameterMap {
   readonly platform_fee: PlatformFeeRule;
   readonly debtor_cost_schedule: DebtorCostSchedule;
   readonly escalation_policy: EscalationPolicy;
+  readonly litigation_cost_estimate: LitigationCostRule;
   readonly success_fee: SuccessFeeRule;
   readonly default_interest: DefaultInterestRule;
   readonly base_rate_table: BaseRateTable;

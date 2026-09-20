@@ -328,6 +328,24 @@ export const demoRegistry: Registry = {
     'zu pruefen: § 1486 ABGB, Beginn und Hemmung im Einzelfall',
   ),
 
+  litigation_cost_estimate: demo(
+    'litigation_cost_estimate',
+    'Tabellen fuer die unverbindliche Prozesskostenschaetzung (GGG und RATG)',
+    'demo-litigation-v1',
+    'L-19',
+    {
+      // ACHTUNG: Platzhalter. Diese Werte sind NICHT belegt und NICHT
+      // freigegeben. Sie stehen hier ausschliesslich, damit die Berechnung
+      // technisch pruefbar ist. Der Startup-Check verhindert den
+      // Produktivbetrieb, solange sie DEMO_ONLY sind.
+      courtFeeTiers: [],
+      ownLegalCostTiers: [],
+      opposingRiskShareBasisPoints: 10_000,
+      vatBasisPoints: 2000,
+    },
+    'zu belegen: GGG (Gerichtsgebuehren) und RATG (Anwaltskosten)',
+  ),
+
   cost_recovery: demo(
     'cost_recovery',
     'Ob Portalkosten dem Schuldner als Betreibungskosten angelastet werden',

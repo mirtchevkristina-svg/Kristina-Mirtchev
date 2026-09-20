@@ -26,7 +26,8 @@ Code deshalb bewusst keine Entscheidung trifft. Die IDs werden im Quelltext als
 | L-15 | Feststellung eines 40 %-Sonderfalls | offen | Erfolgshonorar |
 | L-16 | Zustimmungsfiktion bei Zahlungsbestätigung | offen | Rechnungsauslösung |
 | L-17 | Indexanpassung der Eurobeträge | offen | jeder Eurobetrag aus der Verordnung |
-| L-18 | Preismodell: wer trägt die Kosten | offen | Preisregel, Schuldnertexte, Positionierung |
+| L-18 | Preismodell: wer trägt die Kosten | **entschieden** (Hybrid) | — |
+| L-19 | Gebührentabellen GGG und RATG | offen | Prozesskostenrechner |
 
 ---
 
@@ -388,3 +389,57 @@ bestimmt — und weil sie mit dem schuldnerschonenden Ansatz des Briefings in Sp
 
 **Was bis zur Entscheidung blockiert ist.** B3 (Preisregel) kann gebaut, aber nicht
 produktiv geschaltet werden. Die Schuldnertexte aus G3 hängen unmittelbar daran.
+
+
+---
+
+## L-19 — Gebührentabellen für die Prozesskostenschätzung
+
+**Kontext.** Der Prozesskostenrechner soll dem Gläubiger vor der Entscheidung über eine
+gerichtliche Durchsetzung eine Größenordnung zeigen. Dafür braucht er zwei Tabellen aus
+**getrennten Regimen**:
+
+1. **Gerichtsgebühren nach dem GGG**, gestaffelt nach Streitwert. Keine Umsatzsteuer.
+2. **Rechtsanwaltskosten nach dem RATG**, als Anhaltswert. Zuzüglich Umsatzsteuer.
+
+**Offen.**
+1. Die Tabellenwerte selbst, jeweils mit Fundstelle und Stand.
+2. Wie das Kostenrisiko der Gegenseite angesetzt wird — heute als Anteil der eigenen
+   Kosten, was nur eine grobe Näherung ist.
+3. Ob Einheitssatz, Streitgenossenzuschlag und ERV-Zuschlag in die Schätzung einfließen
+   sollen oder ob das die Schätzung überfrachtet.
+4. Ob der Rechner nach Verfahrensart unterscheiden soll (Mahnklage gegenüber streitigem
+   Verfahren).
+
+**Betroffen.** `litigation_cost_estimate`, `estimateLitigationCosts()`.
+
+**Derzeit im Code.** Die Tabellen sind **leer**. Die Funktion liefert deshalb bewusst
+kein Ergebnis, sondern gibt zurück, dass die Grundlagen fehlen — eine Zahl ohne Grundlage
+wäre schlechter als keine Zahl. Jede Ausgabe, auch die Absage, trägt den Pflichthinweis,
+dass es sich um eine unverbindliche Schätzung handelt und die verbindliche
+Honorarvereinbarung ausschließlich zwischen Gläubiger und Kanzlei zustande kommt.
+
+**Blockiert.** Die Anzeige des Rechners gegenüber Gläubigern.
+
+---
+
+## L-18 — Preismodell · **entschieden: Hybridmodell**
+
+**Entscheidung vom 20.09.2026.** Keine Grundgebühr. Erfolgshonorar vom Gläubiger,
+gestaffelt nach Forderungshöhe von 10 % bis 5 %, angewandt auf den tatsächlich
+eingebrachten Betrag. Zusätzlich werden gegenüber dem Schuldner die tatsächlich
+zulässigen und ersatzfähigen Kosten nach § 3 geltend gemacht.
+
+**Im Code umgesetzt.** Beide Erlösarten sind technisch vollständig getrennt; das
+Honorarmodul kennt die Schuldnerkosten nicht und umgekehrt. Die Staffel liegt
+durchgehend unter dem Höchstsatz von 15 %.
+
+**Was dabei offen bleibt.**
+
+1. **L-01 wird durch diese Entscheidung wichtiger, nicht unwichtiger.** Schuldnerseitige
+   Kosten nach § 3 geltend zu machen setzt voraus, als Inkassoinstitut aufzutreten. Die
+   Gewerbefrage ist damit nicht mehr nur eine Formfrage, sondern Voraussetzung eines
+   Erlösbestandteils.
+2. **L-17** — ohne geprüften Indexstand sind die Beträge nach § 3 nicht belastbar.
+3. Die konkreten Anteile, mit denen das Portal unter den Höchstsätzen bleibt, sind eine
+   Geschäftsentscheidung und stehen als Demo-Werte in der Konfiguration.
