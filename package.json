@@ -1,0 +1,26 @@
+{
+  "name": "forderungsportal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter=@fp/server --filter=@fp/web dev",
+    "build": "pnpm -r build",
+    "typecheck": "tsc -b --pretty false",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:generate": "pnpm --filter @fp/db generate",
+    "db:migrate": "pnpm --filter @fp/db migrate"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

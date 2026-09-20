@@ -1,0 +1,6 @@
+packages:
+  - 'lib/*'
+  - 'artifacts/*'
+  - 'db'
+  - 'server'
+  - 'web'
