@@ -20,12 +20,91 @@
 * **Fakt:** Inkassoinstitute dürfen außervertragliche Schadenersatzforderungen (§ 1295 ABGB) nur einziehen, wenn sie unbestritten sind. [RIS-verifiziert, H]
 * Das Briefing (3.2) nennt „Schadenersatzansprüche" als zulässige Forderungsart. **Empfehlung:** Forderungsgrund-Typ im Datenmodell; deliktische Schadenersatzforderungen bei Bestreitung automatisch aus der Portalbearbeitung nehmen. [Inferenz, M-H]
 
-### 1.3 Gebührenlogik – Kap. 6.3 vermischt zwei Ebenen
+### 1.3 Gebührendeckel nach der Höchstsatzverordnung — KORRIGIERT
 
-* **Fakt:** Es gibt eine Verordnung über Höchstsätze der Inkassoinstituten gebührenden Vergütungen (BGBl 141/1996 idF BGBl II 103/2005); der Nationalrat hat 2020 eine Evaluierung verlangt. [Primärquelle Parlament gesehen, H] Ob sie seither geändert wurde: unbekannt – im RIS prüfen.
-* **Inferenz:** Die Höchstsätze betreffen primär, was dem Schuldner als Betreibungskosten angelastet werden darf (Maßstab § 1333 Abs 2 ABGB), nicht die Gebühr, die der Gläubiger vertraglich an das Portal zahlt. [Gesetz/TD + Inferenz, M]
-* **Kernfrage für das Produkt:** Sollen die 30 € (und das Erfolgshonorar) vom Schuldner als Betreibungskosten zurückgefordert werden? Wenn ja → Höchstsätze, Angemessenheit, B2C-Transparenz werden zentral. Wenn nein → Problem aus 6.3 ist deutlich kleiner. **Diese Entscheidung fehlt im Briefing.**
-* **B2B-Hebel:** § 458 UGB – 40 € Pauschalentschädigung für Betreibungskosten im unternehmerischen Verkehr. [Gesetz/TD, H] Kann dem Gläubiger helfen, die Portalgebühr wirtschaftlich zu kompensieren (Anrechnung auf weitere Betreibungskosten beachten – [Gesetz/TD, M]).
+> **Korrektur vom 20.09.2026.** Die ursprüngliche Fassung dieses Abschnitts nahm an, die
+> Höchstsatzverordnung betreffe vor allem das, was dem *Schuldner* als Betreibungskosten
+> angelastet werden darf. **Das war falsch.** § 2 der Verordnung (im RIS nachgelesen)
+> deckelt ausdrücklich die **Auftraggebergebühr** — also genau das, was das Portal dem
+> **Gläubiger** verrechnet. Der Abschnitt ist deshalb vollständig ersetzt.
+
+**Grundlage:** § 2 der Verordnung über die Höchstsätze der Inkassoinstituten gebührenden
+Vergütungen (BGBl 141/1996 idF BGBl II 103/2005). [RIS-verifiziert, H]
+
+#### Die vier maßgeblichen Deckel
+
+| Posten | Höchstsatz | Bezugsgröße |
+|---|---|---|
+| Auftragsgebühr (im Voraus) | **6 %** | Forderung |
+| Erfolgsabhängige Vergütung, nicht eingeklagt | **15 %** | eingebrachter Betrag |
+| Erfolgsabhängige Vergütung, Sonderfälle | **40 %** | eingebrachter Betrag |
+| Forderung stellt sich als nicht bestehend heraus | **20 %** | Forderung |
+
+Die 40 %-Stufe gilt nur für: wiederholte vergebliche Inkassoversuche, verjährte Forderungen,
+Konkursforderungen. [RIS-verifiziert, H]
+
+#### Konsequenzen für das Produkt
+
+1. **15 % Erfolgshonorar liegen exakt am Deckel.** Es gibt keinen Spielraum nach oben.
+   Technisch ist der Satz deshalb nicht nur konfigurierbar, sondern wird gegen die
+   Obergrenze validiert; eine höhere Konfiguration ist ein Startfehler, kein stilles Kappen.
+2. **Die 30 € sind erst ab einer Forderung von 500 € gedeckt.** Bei 200 € Forderung wären
+   höchstens 12 € zulässig. Die Gebühr ist daher `min(Stufenbetrag, 6 % der Forderung)` —
+   eine reine Betragsstaffel ohne diese Deckelung ist am unteren Rand jeder Stufe
+   zwangsläufig unzulässig. Damit ist die offene Frage aus Briefing Kap. 6.3 beantwortet.
+3. **Direktzahlungen sind erfasst.** Bemessungsgrundlage sind die Beträge, um die sich die
+   Schuld durch Leistungen des Schuldners während der Vertragsdauer mindert. Daraus folgt,
+   dass die 15 % auch bei Direktzahlung an den Gläubiger anfallen. [Inferenz, M-H] Das
+   stützt das Modell „kein Kundengeld" ausdrücklich.
+4. **Die 20 %-Regel bei nicht bestehender Forderung** ist ein vertraglicher Hebel gegen
+   Gläubiger, die unberechtigte Forderungen einreichen. Ob genutzt, ist eine geschäftliche
+   Entscheidung; im Verbraucherbereich vorher prüfen lassen.
+
+#### Weiterhin offen
+
+- **L-13:** Sind die Prozentsätze netto oder brutto zu verstehen?
+- **L-14:** Erlaubt der Gesamtdeckel („Summe der Höchstsätze") eine Verschiebung zwischen den
+  Posten? Bis zur Klärung wird jeder Posten **einzeln** eingehalten — die strengere Auslegung.
+- **L-15:** Wer stellt nach welchen Kriterien fest, dass ein 40 %-Sonderfall vorliegt? Das
+  wird nie automatisch angenommen.
+
+#### Unberührt bleibt
+
+**B2B-Hebel § 458 UGB:** 40 € Pauschalentschädigung für Betreibungskosten im unternehmerischen
+Verkehr. [Gesetz/TD, H] Kann dem Gläubiger helfen, die Portalgebühr wirtschaftlich zu
+kompensieren (Anrechnung auf weitere Betreibungskosten beachten — [Gesetz/TD, M]).
+
+---
+
+### 1.3a Zahlungsbestätigung: Schuldnermeldung allein trägt keine Rechnung
+
+Der Ablauf „Schuldner bestätigt → automatisch Rechnung, außer der Gläubiger widerspricht"
+ist in der Grundidee richtig, als alleiniger Auslöser aber zu schwach. [Inferenz, H]
+
+- Die Bestätigung des Schuldners belegt höchstens den Überweisungsauftrag, nicht den Eingang
+  beim Gläubiger. Sie kann falsch oder gefälscht sein, oder das Geld ging an die falsche IBAN.
+- Rechnungen auf unbestätigter Basis erzeugen Streit und Gutschriften — das kostet Vertrauen.
+
+**Empfohlener Ablauf:**
+
+1. Schuldner meldet die Zahlung und lädt einen Beleg hoch → Status `payment_announced`.
+2. Gläubiger wird aufgefordert, den Eingang von € X zu bestätigen — mit Frist (z. B. 14 Tage)
+   und Erinnerung.
+3. Bestätigt er, wird die Rechnung erstellt.
+4. Schweigt er, gilt die Zahlung per AGB als bestätigt (Zustimmungsfiktion), Rechnung mit Hinweis.
+5. Widerspricht er, muss er den Widerspruch belegen (z. B. Kontoauszugsausschnitt). Damit sinkt
+   der Anreiz, Zahlungen wahrheitswidrig abzustreiten. Danach Klärung mit dem Schuldner.
+
+**Rechtliche Punkte dazu** [Gesetz/TD, nicht verifiziert]:
+
+- Bei **Verbrauchern als Auftraggebern** ist eine Zustimmungsfiktion nach § 6 Abs 1 Z 2 KSchG
+  nur wirksam, wenn die Frist angemessen ist und im Einzelfall ausdrücklich auf die Folge des
+  Schweigens hingewiesen wird. [H]
+- Rechnungen müssen § 11 UStG entsprechen und fortlaufend nummeriert sein. [H]
+- Bei Ratenzahlungen empfiehlt sich eine monatliche Sammelrechnung statt einer Rechnung pro
+  Rate. Das ist eine UX-Empfehlung, keine Rechtsfrage.
+
+Siehe **L-16** in docs/LEGAL_OPEN_QUESTIONS.md.
 
 ### 1.4 Verzugszinsen
 
@@ -128,7 +207,7 @@
 ## 7. Top 10 – Reihenfolge nach Hebelwirkung
 
 1. Gewerbefrage § 118 GewO klären (Existenzfrage)
-2. Entscheidung: Werden Portalkosten vom Schuldner zurückgefordert? (bestimmt Gebührenrecht, Texte, UI)
+2. Gebührendeckel technisch erzwingen: `min(30 €, 6 %)` und 15 %-Obergrenze (Abschnitt 1.3, korrigiert)
 3. Verjährungswarnung + Anerkenntnis-Dokumentation
 4. Insolvenzcheck vor Kontakt
 5. Statusmodell entflechten + Back-Office-RBAC

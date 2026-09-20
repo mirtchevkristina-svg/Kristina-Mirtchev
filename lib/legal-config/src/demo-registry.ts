@@ -48,7 +48,9 @@ function demo<K extends ParameterKey>(
 export const demoRegistry: Registry = {
   platform_fee: demo(
     'platform_fee',
-    'Bearbeitungsgebuehr des Portals, gestaffelt nach Hauptforderung',
+    'Auftragsgebuehr des Portals, gestaffelt nach Hauptforderung. Der ' +
+      'gesetzliche Deckel von 6 % der Forderung wird zusaetzlich in ' +
+      'computeOrderFee() angewandt und ist nicht abschaltbar.',
     'demo-platform-fee-v1',
     'L-03',
     {

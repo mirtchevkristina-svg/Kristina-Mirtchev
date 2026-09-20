@@ -4,6 +4,7 @@
 
 import { ConfigError, type ConfigParameter, type ConfigVersion } from './types.js';
 import type { ParameterKey, ParameterMap } from './parameters.js';
+import { MAX_SUCCESS_FEE_BASIS_POINTS, formatBasisPoints } from './caps.js';
 
 export type Registry = {
   readonly [K in ParameterKey]: ConfigParameter<ParameterMap[K]>;
@@ -118,6 +119,21 @@ export function validateRegistry(registry: Registry): ValidationIssue[] {
           versionId: version.id,
           message: 'DEMO_ONLY ohne Verweis auf die offene Rechtsfrage',
         });
+      }
+      // Gesetzlicher Hoechstsatz: ein zu hoch konfigurierter Erfolgshonorar-
+      // satz ist ein Konfigurationsfehler, der den Start verhindern muss.
+      if (key === 'success_fee') {
+        const rate = (version.value as ParameterMap['success_fee']).basisPoints;
+        if (rate > MAX_SUCCESS_FEE_BASIS_POINTS) {
+          issues.push({
+            key,
+            versionId: version.id,
+            message:
+              `Erfolgshonorarsatz ${formatBasisPoints(rate)} ueberschreitet den Hoechstsatz ` +
+              `von ${formatBasisPoints(MAX_SUCCESS_FEE_BASIS_POINTS)} ` +
+              '(§ 2 Verordnung BGBl 141/1996 idF BGBl II 103/2005)',
+          });
+        }
       }
     }
   }

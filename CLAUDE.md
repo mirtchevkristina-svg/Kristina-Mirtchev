@@ -89,6 +89,35 @@ Jede Änderung muss diese Regeln einhalten. Wenn eine Aufgabe eine davon verletz
 * `success_fee_calculations` referenziert genau eine `payment_id` (Unique-Constraint) → keine Doppelabrechnung.
 * Bemessungsgrundlage gemäß Vertrags-Snapshot; USt separat.
 
+### 4.4a Gesetzliche Gebuehrendeckel (Hoechstsatzverordnung)
+
+Grundlage: § 2 der Verordnung ueber die Hoechstsaetze der Inkassoinstituten gebuehrenden Verguetungen (BGBl 141/1996 idF BGBl II 103/2005). Die Verordnung deckelt die **Auftraggebergebuehr**, also das, was dem Glaeubiger verrechnet wird - nicht in erster Linie das, was dem Schuldner angelastet wird.
+
+| Posten | Hoechstsatz | Bezugsgroesse |
+|---|---|---|
+| Auftragsgebuehr (im Voraus) | 6 % | Forderung |
+| Erfolgsabhaengige Verguetung, nicht eingeklagt | 15 % | eingebrachter Betrag |
+| Erfolgsabhaengige Verguetung, Sonderfaelle | 40 % | eingebrachter Betrag |
+| Forderung besteht nicht | 20 % | Forderung |
+
+* Die Auftragsgebuehr ist immer `min(konfigurierter Stufenbetrag, 6 % der Forderung)`. Eine reine Betragsstaffel ist am unteren Rand jeder Stufe zwangslaeufig unzulaessig: 30 EUR sind erst ab einer Forderung von 500 EUR gedeckt. Der Deckel ist nicht abschaltbar und nicht konfigurierbar.
+* Ein konfigurierter Erfolgshonorarsatz ueber 15 % ist ein Konfigurationsfehler und verhindert den Start. Es wird nie still auf den Hoechstsatz gekappt.
+* Die 40 %-Stufe (wiederholte vergebliche Inkassoversuche, verjaehrte Forderungen, Konkursforderungen) wird nie automatisch angenommen, sondern nur nach dokumentierter rechtlicher Wertung gesetzt.
+* Bemessungsgrundlage der erfolgsabhaengigen Verguetung sind die Betraege, um die sich die Schuld durch Leistungen des Schuldners waehrend der Vertragsdauer mindert. Direktzahlungen an den Glaeubiger sind damit erfasst.
+* Offen und daher in der strengeren Auslegung umgesetzt (jeder Posten einzeln eingehalten): ob die Saetze netto oder brutto zu verstehen sind (L-13) und ob der Gesamtdeckel eine Verschiebung zwischen den Posten erlaubt (L-14).
+
+### 4.4b Zahlungsbestaetigung und Rechnungsausloesung
+
+Eine Zahlungsmeldung des Schuldners loest nie allein eine Rechnung aus. Sie belegt hoechstens den Ueberweisungsauftrag, nicht den Eingang beim Glaeubiger.
+
+1. Schuldner meldet die Zahlung samt Beleg -> `payment_announced`.
+2. Glaeubiger wird zur Bestaetigung des Eingangs aufgefordert, mit Frist und Erinnerung.
+3. Bestaetigung -> Rechnung.
+4. Schweigen -> Zustimmungsfiktion laut AGB, Rechnung mit Hinweis. Gegenueber Verbrauchern als Auftraggebern nur mit angemessener Frist und ausdruecklichem Hinweis auf die Folge des Schweigens (§ 6 Abs 1 Z 2 KSchG) - LEGAL-REVIEW L-16.
+5. Widerspruch -> der Glaeubiger muss ihn belegen, danach Klaerung mit dem Schuldner.
+
+Rechnungen entsprechen § 11 UStG und sind fortlaufend nummeriert. Bei Ratenzahlungen wird monatlich gesammelt abgerechnet, nicht je Rate.
+
 ### 4.5 Stripe
 
 * Webhook-Route vor `express.json()` mit Raw-Body registrieren, Signatur prüfen.
